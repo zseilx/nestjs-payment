@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String // 상품 이름
+  description String? // 상품 설명
+  price       Int // 단가 (원 단위, VAT 포함)
+  imageUrl    String?
+  currency    String   @default("KRW") // 통화 단위 (기본: KRW)
+  stock       Int? // 재고 수량 (재고 관리 안 하면 생략 가능)
+  isActive    Boolean  @default(true) // 판매 중지 여부
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  userId         String // 주문자
+  totalAmount    Int // 주문 전체 금액 (정상가 * 수량 합)
+  status         String // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
+  paidAmount     Int? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
+  refundedAmount Int? // 환불된 총 금액 (부분 환불 고려)
+  paymentId      String? // 결제 ID
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  orderItems OrderItem[]
+  Payment    Payment?    @relation(fields: [paymentId], references: [id])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  productId   String
+  orderId     String
+  quantity    Int
+  canceledQty Int      @default(0) // 부분 취소된 수량
+  unitPrice   Int // 주문 당시 단가
+  productName String // 주문 당시 상품명 (캐시)
+  optionName  String? // ex: "색상: 블랙 / 사이즈: L"
+  createdAt   DateTime @default(now())
+
+  // payment      Payment?  @relation(fields: [paymentId], references: [id])
+  Product Product @relation(fields: [productId], references: [id])
+  Order   Order   @relation(fields: [orderId], references: [id])
+}
+
+model Payment {
+  id        String    @id @default(cuid())
+  amount    Int
+  method    String // CARD, BANK_TRANSFER, etc.
+  status    String // INITIATED, SUCCESS, FAILED
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  orders  Order[]
+  refunds Refund[]
+}
+
+model Refund {
+  id         String    @id @default(uuid())
+  paymentId  String
+  reason     String?
+  amount     Int
+  refundedAt DateTime?
+
+  payment Payment @relation(fields: [paymentId], references: [id])
+}

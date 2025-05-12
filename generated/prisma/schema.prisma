@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// model Order {
+//   id           String   @id @default(cuid())
+//   userId       String
+//   amount       Int
+//   status       String    // e.g., PENDING, PAID, CANCELED
+//   createdAt    DateTime  @default(now())
+//   paymentId    String?
+
+//   payment      Payment?  @relation(fields: [paymentId], references: [id])
+// }
+
+// model Payment {
+//   id           String   @id @default(cuid())
+//   amount       Int
+//   method       String   // CARD, BANK_TRANSFER, etc.
+//   status       String   // INITIATED, SUCCESS, FAILED
+//   paidAt       DateTime?
+//   createdAt    DateTime @default(now())
+
+//   orders       Order[]
+//   refunds      Refund[]
+// }
+
+// model Refund {
+//   id          String   @id @default(uuid())
+//   paymentId   String
+//   reason      String?
+//   amount      Int
+//   refundedAt  DateTime?
+
+//   payment     Payment  @relation(fields: [paymentId], references: [id])
+// }
