@@ -1,4 +1,8 @@
-import { Body, Controller, Get, Logger, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
+import {
+  PayletterPaymentsCallbackResponseDto,
+  PayletterPaymentsReturnSuccessResponseDto,
+} from './dto/payletter-payments.response';
 import { PaymentService } from './payment.service';
 
 @Controller('payments')
@@ -15,30 +19,18 @@ export class PaymentController {
   }
 
   @Post('return')
-  returnCheck(@Body() body: any) {
+  returnCheck(@Body() body: PayletterPaymentsReturnSuccessResponseDto) {
     this.logger.debug('returnCheck');
     this.logger.log(body);
+
     return body;
   }
 
   @Post('callback')
-  callbackCheckPost(@Body() body: any) {
+  callbackCheckPost(@Body() body: PayletterPaymentsCallbackResponseDto) {
     this.logger.debug('callbackCheckPost');
     this.logger.log(body);
-    return body;
-  }
 
-  @Get('callback')
-  callbackCheckGet(@Body() body: any) {
-    this.logger.debug('callbackCheckGet');
-    this.logger.log(body);
-    return body;
-  }
-
-  @Patch('callback')
-  callbackCheckPatch(@Body() body: any) {
-    this.logger.debug('callbackCheckPatch');
-    this.logger.log(body);
     return body;
   }
 
