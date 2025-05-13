@@ -257,7 +257,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/timely/Desktop/project/personal/nestjs-payment/generated/prisma",
+      "value": "/Users/zseil/Desktop/project/personal/nodejs/nestjs-payment/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -271,7 +271,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/timely/Desktop/project/personal/nestjs-payment/prisma/schema.prisma",
+    "sourceFilePath": "/Users/zseil/Desktop/project/personal/nodejs/nestjs-payment/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

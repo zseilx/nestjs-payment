@@ -41,12 +41,6 @@ model Order {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
-  externalOrderNo      String? // PG사 주문번호 (order_no 또는 cid)
-  summaryTitle         String? // ex: "상품명 외 2건"
-  couponAmount         Int? // 쿠폰 할인
-  discountAmount       Int? // 기타 할인
-  disposableCupDeposit Int? // 컵 보증금 등
-
   orderItems OrderItem[]
   payment    Payment?    @relation(fields: [paymentId], references: [id])
   refunds    Refund[]
