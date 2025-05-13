@@ -15,33 +15,41 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String // 상품 이름
-  description String? // 상품 설명
-  price       Int // 단가 (원 단위, VAT 포함)
-  imageUrl    String?
-  currency    String   @default("KRW") // 통화 단위 (기본: KRW)
-  stock       Int? // 재고 수량 (재고 관리 안 하면 생략 가능)
-  isActive    Boolean  @default(true) // 판매 중지 여부
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String // 상품 이름
+  description  String? // 상품 설명
+  price        Int // 단가 (원 단위, VAT 포함)
+  imageUrl     String?
+  currency     String   @default("KRW") // 통화 단위 (기본: KRW)
+  stock        Int? // 재고 수량 (재고 관리 안 하면 생략 가능)
+  isActive     Boolean  @default(true) // 판매 중지 여부
+  isRefundable Boolean  @default(true) // 환불 가능 여부
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   orderItems OrderItem[]
 }
 
 model Order {
-  id             String   @id @default(cuid())
+  id             String      @id @default(cuid())
   userId         String // 주문자
   totalAmount    Int // 주문 전체 금액 (정상가 * 수량 합)
-  status         String // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
+  status         OrderStatus // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
   paidAmount     Int? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
   refundedAmount Int? // 환불된 총 금액 (부분 환불 고려)
   paymentId      String? // 결제 ID
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  externalOrderNo      String? // PG사 주문번호 (order_no 또는 cid)
+  summaryTitle         String? // ex: "상품명 외 2건"
+  couponAmount         Int? // 쿠폰 할인
+  discountAmount       Int? // 기타 할인
+  disposableCupDeposit Int? // 컵 보증금 등
 
   orderItems OrderItem[]
-  Payment    Payment?    @relation(fields: [paymentId], references: [id])
+  payment    Payment?    @relation(fields: [paymentId], references: [id])
+  refunds    Refund[]
 }
 
 model OrderItem {
@@ -56,28 +64,108 @@ model OrderItem {
   createdAt   DateTime @default(now())
 
   // payment      Payment?  @relation(fields: [paymentId], references: [id])
-  Product Product @relation(fields: [productId], references: [id])
-  Order   Order   @relation(fields: [orderId], references: [id])
-}
-
-model Payment {
-  id        String    @id @default(cuid())
-  amount    Int
-  method    String // CARD, BANK_TRANSFER, etc.
-  status    String // INITIATED, SUCCESS, FAILED
-  paidAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  orders  Order[]
+  product Product  @relation(fields: [productId], references: [id])
+  order   Order    @relation(fields: [orderId], references: [id])
   refunds Refund[]
 }
 
-model Refund {
-  id         String    @id @default(uuid())
-  paymentId  String
-  reason     String?
-  amount     Int
-  refundedAt DateTime?
+model Payment {
+  id          String        @id @default(cuid())
+  amount      Int
+  method      PaymentMethod // CARD, BANK_TRANSFER, etc.
+  serviceName String
+  status      PaymentStatus // INITIATED, SUCCESS, FAILED
+  onlineUrl   String?
+  mobileUrl   String?
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+
+  orders  Order[]
+  refunds Refund[]
+
+  payletterDetail PayletterDetail?
+}
+
+model PayletterDetail {
+  id                    String  @id @default(cuid())
+  paymentId             String  @unique
+  code                  String? // 결과
+  message               String? // 메시지
+  tid                   String? // PG 고유 결제번호
+  cid                   String? // PG 승인번호
+  orderNo               String? // PG 가맹점 주문 번호
+  pgcode                String // PG 코드
+  serviceName           String? // 결제 서비스명 (예: 타임리 GPT)
+  productName           String? // PG 결제 시 사용된 상품 이름
+  payhash               String? // 파라메터 검증을 위한 sha256 hash 값 Sha256(user_id +amount + tid +결제용 API Key) * 일부 결제 수단은 전달되지 않습니다.(가상계좌 등)
+  payInfo               String? // 결제 부가 정보
+  methodInfo            String? // 복합결제 (예: 신용카드+(충전)포인트) 시 메인 결제 수단 (적용결제 수단: 네이버페이, 카카오페이, SSG페이, 페이코, 토스(예정))
+  domesticFlag          String? // 국내 / 해외 신용카드 구분 (Y : 해외, N : 국내)
+  billkey               String? // 자동결제 재결제용 키
+  cardInfo              String? // 마스킹(중간6자리) 카드번호 (일반결제(신용카드, 페이코) / 자동결제(신용카드, 페이코) 에만 전달)
+  disposableCupDeposit  Int? // 결제요청한 일회용 컵 보증금
+  taxAmount             Int? // 부가세 금액(세팅하지 않는 경우 (결제금액 - 비과세 금액)/11 : 소수점이하 반올림으로 자동 계산)
+  taxfreeAmount         Int? // 비과세 금액
+  nonsettleAmount       Int? // 미정산 금액
+  couponAmount          Int? // 쿠폰 금액 (페이코만 적용)
+  receiptPossibleAmount Int? // 현금영수증 가능 금액
+  // 현금 영수증
+  cashReceiptCode       String? // 현금영수증 - 결과
+  cashReceiptMessage    String? // 현금영수증 - 메시지
+  cashReceiptCid        String? // 현금영수증 - 승인번호
+  cashReceiptDealNo     String? // 현금영수증 - 발급시 주문번호
+  cashReceiptIssueType  String? // 현금영수증 - 발행 구분
+  cashReceiptPayerSid   String? // 현금영수증 - 신분확인 번호
+  cashReceiptType       String? // 현금영수증 - 거래자 구분
+  // 가상 계좌
+  account_no            String? // 가상계좌 - 번호
+  account_name          String? // 가상계좌 - 입금자명
+  account_holder        String? // 가상계좌 - 예금주명
+  bank_code             String? // 가상계좌 - 은행 코드
+  bank_name             String? // 가상계좌 - 은행명
+  issue_tid             String? // 가상계좌 - 채번 승인번호
+  expire_date           String? // 가상계좌 - 입금만료일 (ex: 20210808)
+  expire_time           String? // 가상계좌 - 만료시각 (ex: 1130)
+
+  transactionDate DateTime? // 결제 완료 시각
 
   payment Payment @relation(fields: [paymentId], references: [id])
+}
+
+model Refund {
+  id          String    @id @default(uuid())
+  paymentId   String
+  orderId     String? // 전체 주문 환불 시 사용
+  orderItemId String?
+  reason      String?
+  amount      Int
+  quantity    Int?
+  refundedAt  DateTime?
+
+  payment   Payment    @relation(fields: [paymentId], references: [id])
+  orderItem OrderItem? @relation(fields: [orderItemId], references: [id])
+  order     Order?     @relation(fields: [orderId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PARTIALLY_CANCELED
+  CANCELED
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCESS
+  FAILED
+}
+
+enum PaymentMethod {
+  CARD
+  BANK_TRANSFER
+  VIRTUAL_ACCOUNT
+  MOBILE
+  POINT
+  VOUCHER
+  OTHER
 }

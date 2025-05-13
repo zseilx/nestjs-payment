@@ -1,41 +1,33 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
-import {
-  PayletterPaymentsCallbackResponseDto,
-  PayletterPaymentsReturnSuccessResponseDto,
-} from './dto/payletter-payments.response';
-import { PaymentService } from './payment.service';
+import { Body, Controller, Param, Post } from '@nestjs/common';
+import { PgProvider } from './abstract-payment-service';
+import { PaymentServiceFactory } from './payment-service.factory';
+import { PgProviderPipe } from './pg-provider.pipe';
 
 @Controller('payments')
 export class PaymentController {
-  private readonly logger = new Logger(PaymentController.name);
+  constructor(private readonly paymentServiceFactory: PaymentServiceFactory) {}
 
-  constructor(private readonly paymentService: PaymentService) {
-    // this. PAYLETTER_API_KEY = appConfigService.get()
+  @Post(':paymentId/callback/:pgProvider')
+  handleCallback(
+    @Param('paymentId') paymentId: string,
+    @Param('pgProvider', PgProviderPipe) pgProvider: PgProvider,
+    @Body() request: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.paymentServiceFactory
+      .getProvider(pgProvider)
+      .handleCallback(request);
   }
 
-  @Post()
-  async paymentRequest() {
-    await this.paymentService.test();
-  }
-
-  @Post('return')
-  returnCheck(@Body() body: PayletterPaymentsReturnSuccessResponseDto) {
-    this.logger.debug('returnCheck');
-    this.logger.log(body);
-
-    return body;
-  }
-
-  @Post('callback')
-  callbackCheckPost(@Body() body: PayletterPaymentsCallbackResponseDto) {
-    this.logger.debug('callbackCheckPost');
-    this.logger.log(body);
-
-    return body;
-  }
-
-  @Post('cancel')
-  async cancelPayments() {
-    await this.paymentService.cancel();
+  @Post(':paymentId/return/:pgProvider')
+  handleReturn(
+    @Param('paymentId') paymentId: string,
+    @Param('pgProvider', PgProviderPipe) pgProvider: PgProvider,
+    @Body() request: any,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.paymentServiceFactory
+      .getProvider(pgProvider)
+      .handleCallback(request);
   }
 }

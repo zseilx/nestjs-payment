@@ -1,24 +1,42 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from 'src/config/app-config/app-config.service';
+import { PrismaService } from 'src/config/prisma/prisma.service';
+import { OrderService } from 'src/order/order.service';
+import { AbstractPaymentService } from '../abstract-payment-service';
 import {
   PayletterPaymentsFailureResponseDto,
   PayletterPaymentsRequestDto,
   PayletterPaymentsSuccessResponseDto,
 } from './dto/payletter-payments.dto';
+import {
+  PayletterPaymentsCallbackSuccessResponseDto,
+  PayletterPaymentsReturnSuccessResponseDto,
+} from './dto/payletter-payments.response';
 
 @Injectable()
-export class PaymentService {
-  private readonly logger = new Logger(PaymentService.name);
+export class PayletterService extends AbstractPaymentService {
+  private readonly logger = new Logger(PayletterService.name);
   private readonly PAYLETTER_API_URL: string;
   private readonly PAYLETTER_API_KEY: string;
   private readonly PAYLETTER_ID: string;
+
   constructor(
     private readonly httpService: HttpService,
+    private readonly prismaService: PrismaService,
+    @Inject(forwardRef(() => OrderService))
+    private readonly orderService: OrderService,
     appConfigService: AppConfigService,
   ) {
+    super();
     this.PAYLETTER_API_URL = appConfigService.get('PAYLETTER_API_URL');
     this.PAYLETTER_API_KEY = appConfigService.get('PAYLETTER_API_KEY');
     this.PAYLETTER_ID = appConfigService.get('PAYLETTER_ID');
@@ -65,14 +83,7 @@ export class PaymentService {
     this.logger.log(data);
   }
 
-  async cancel() {
-    const requestData = {
-      pgcode: 'kakaopay',
-      client_id: this.PAYLETTER_ID,
-      user_id: 'asdzxcttttt',
-      tid: '',
-    };
-
+  async requestPayment(request: PayletterPaymentsRequestDto) {
     const { data } = await firstValueFrom(
       this.httpService
         .request<PayletterPaymentsSuccessResponseDto>({
@@ -82,7 +93,7 @@ export class PaymentService {
             Authorization: `PLKEY ${this.PAYLETTER_API_KEY}`,
           },
           data: {
-            ...requestData,
+            ...request,
           },
         })
         .pipe(
@@ -97,5 +108,31 @@ export class PaymentService {
           ),
         ),
     );
+
+    return data;
+  }
+
+  cancelPayment(paymentId: string) {
+    // TODO: 결제 취소 구현
+    throw new Error('Method not implemented.');
+  }
+
+  verifyCallback(callbackData: any) {
+    // TODO: 콜백 검증 구현
+    throw new Error('Method not implemented.');
+  }
+
+  handleReturn(returnData: PayletterPaymentsReturnSuccessResponseDto) {
+    throw new Error('Method not implemented.');
+  }
+
+  handleCallback(callbackData: PayletterPaymentsCallbackSuccessResponseDto) {
+    // TODO: 결제 완료 후 상품 지급
+    // this.orderService.fulfillOrder()
+    throw new Error('Method not implemented.');
+  }
+
+  getRedirectUrl(paymentId: string) {
+    throw new Error('Method not implemented.');
   }
 }

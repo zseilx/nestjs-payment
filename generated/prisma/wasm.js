@@ -120,9 +120,157 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  imageUrl: 'imageUrl',
+  currency: 'currency',
+  stock: 'stock',
+  isActive: 'isActive',
+  isRefundable: 'isRefundable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  paidAmount: 'paidAmount',
+  refundedAmount: 'refundedAmount',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  externalOrderNo: 'externalOrderNo',
+  summaryTitle: 'summaryTitle',
+  couponAmount: 'couponAmount',
+  discountAmount: 'discountAmount',
+  disposableCupDeposit: 'disposableCupDeposit'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  orderId: 'orderId',
+  quantity: 'quantity',
+  canceledQty: 'canceledQty',
+  unitPrice: 'unitPrice',
+  productName: 'productName',
+  optionName: 'optionName',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  method: 'method',
+  serviceName: 'serviceName',
+  status: 'status',
+  onlineUrl: 'onlineUrl',
+  mobileUrl: 'mobileUrl',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PayletterDetailScalarFieldEnum = {
+  id: 'id',
+  paymentId: 'paymentId',
+  code: 'code',
+  message: 'message',
+  tid: 'tid',
+  cid: 'cid',
+  orderNo: 'orderNo',
+  pgcode: 'pgcode',
+  serviceName: 'serviceName',
+  productName: 'productName',
+  payhash: 'payhash',
+  payInfo: 'payInfo',
+  methodInfo: 'methodInfo',
+  domesticFlag: 'domesticFlag',
+  billkey: 'billkey',
+  cardInfo: 'cardInfo',
+  disposableCupDeposit: 'disposableCupDeposit',
+  taxAmount: 'taxAmount',
+  taxfreeAmount: 'taxfreeAmount',
+  nonsettleAmount: 'nonsettleAmount',
+  couponAmount: 'couponAmount',
+  receiptPossibleAmount: 'receiptPossibleAmount',
+  cashReceiptCode: 'cashReceiptCode',
+  cashReceiptMessage: 'cashReceiptMessage',
+  cashReceiptCid: 'cashReceiptCid',
+  cashReceiptDealNo: 'cashReceiptDealNo',
+  cashReceiptIssueType: 'cashReceiptIssueType',
+  cashReceiptPayerSid: 'cashReceiptPayerSid',
+  cashReceiptType: 'cashReceiptType',
+  account_no: 'account_no',
+  account_name: 'account_name',
+  account_holder: 'account_holder',
+  bank_code: 'bank_code',
+  bank_name: 'bank_name',
+  issue_tid: 'issue_tid',
+  expire_date: 'expire_date',
+  expire_time: 'expire_time',
+  transactionDate: 'transactionDate'
+};
+
+exports.Prisma.RefundScalarFieldEnum = {
+  id: 'id',
+  paymentId: 'paymentId',
+  orderId: 'orderId',
+  orderItemId: 'orderItemId',
+  reason: 'reason',
+  amount: 'amount',
+  quantity: 'quantity',
+  refundedAt: 'refundedAt'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  PARTIALLY_CANCELED: 'PARTIALLY_CANCELED',
+  CANCELED: 'CANCELED'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  CARD: 'CARD',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  VIRTUAL_ACCOUNT: 'VIRTUAL_ACCOUNT',
+  MOBILE: 'MOBILE',
+  POINT: 'POINT',
+  VOUCHER: 'VOUCHER',
+  OTHER: 'OTHER'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  INITIATED: 'INITIATED',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
 
 exports.Prisma.ModelName = {
-
+  Product: 'Product',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  Payment: 'Payment',
+  PayletterDetail: 'PayletterDetail',
+  Refund: 'Refund'
 };
 
 /**

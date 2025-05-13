@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export interface PaginationOptions {
   page?: number; // 현재 페이지 번호
@@ -8,6 +9,7 @@ export interface PaginationOptions {
 
 export class PagingInfo {
   @ApiPropertyOptional({ description: '전체 데이터 수' })
+  @IsOptional()
   totalRow?: number;
 
   @ApiProperty({ description: '현재 페이지', example: 1 })
