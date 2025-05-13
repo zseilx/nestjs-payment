@@ -1,5 +1,11 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/config/prisma/prisma.service';
+import { PgProvider } from 'src/payment/abstract-payment-service';
 import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
 import { CreateOrderRequest } from './dto/create-order.request';
 
@@ -11,6 +17,7 @@ export class OrderService {
     private readonly prismaService: PrismaService,
   ) {}
 
+  // TODO: 상세 구현
   async createOrder(request: CreateOrderRequest) {
     // const order = this.prismaService.order.create({
     //   data: {
@@ -18,22 +25,114 @@ export class OrderService {
     //     status: OrderStatus.PENDING,
     //   },
     // });
-    // const paymentUrl = '';
-    // const payment = await this.paymentService.create(
-    //   {} as PayletterPaymentsRequestDto,
-    // );
-    // // TODO: 주문 생성 로직 구현
-    // return payment.online_url;
+
+    // const payment = await this.paymentServiceFactory
+    //   .getProvider()
+    //   .requestPayment({});
+
+    return {
+      url: '',
+    };
   }
 
-  async fulfillOrder(orderId: string) {}
+  // TODO: 완성 필요
+  async getOrder(orderId: string) {
+    return this.prismaService.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+  }
 
+  async retryPayment(orderId: string) {
+    const order = await this.prismaService.order.findUnique({
+      include: {
+        payment: true,
+      },
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order || !order.payment) {
+      throw new NotFoundException(
+        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+      );
+    }
+
+    return this.paymentServiceFactory
+      .getProvider(order.payment.pgProvider as PgProvider)
+      .getRedirectUrl(order.payment.id);
+  }
+
+  // TODO: 상세 구현
+  async fulfillOrder(orderId: string) {
+    const order = await this.prismaService.order.findUnique({
+      include: {
+        orderItems: true,
+      },
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order || !order.orderItems || order.orderItems.length <= 0) {
+      throw new NotFoundException(
+        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+      );
+    }
+
+    // 주문 상품 지급 절차
+  }
+
+  // TODO: 상세 구현
   async cancelOrder(orderId: string, reason?: string) {
+    const order = await this.prismaService.order.findUnique({
+      include: {
+        payment: true,
+      },
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order || !order.payment) {
+      throw new NotFoundException(
+        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+      );
+    }
     // orderId를 통해 order의 진행 상태 및 환불 가능 여부 확인
-    // 상품 지급 철회 절차
-    // payment 서비스의 환불 호출
-    // this.paymentServiceFactory.getProvider().cancelPayment()
+
+    // 주문 상품 회수
+
+    return this.paymentServiceFactory
+      .getProvider(order.payment.pgProvider as PgProvider)
+      .cancelPayment(order.payment.id, reason);
   }
 
-  async cancelOrderPartial() {}
+  // TODO: 상세 구현
+  async cancelOrderPartial(orderId: string, request: any, reason?: string) {
+    const order = await this.prismaService.order.findUnique({
+      include: {
+        payment: true,
+      },
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order || !order.payment) {
+      throw new NotFoundException(
+        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+      );
+    }
+
+    // orderId를 통해 order의 진행 상태 및 환불 가능 여부 확인
+
+    // 주문 상품 회수
+
+    return this.paymentServiceFactory
+      .getProvider(order.payment.pgProvider as PgProvider)
+      .cancelPaymentPartial(order.payment.id, request, reason);
+  }
 }

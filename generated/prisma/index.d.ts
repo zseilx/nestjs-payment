@@ -5219,11 +5219,10 @@ export namespace Prisma {
   export type PaymentMinAggregateOutputType = {
     id: string | null
     amount: number | null
+    pgProvider: string | null
     method: $Enums.PaymentMethod | null
     serviceName: string | null
     status: $Enums.PaymentStatus | null
-    onlineUrl: string | null
-    mobileUrl: string | null
     paidAt: Date | null
     createdAt: Date | null
   }
@@ -5231,11 +5230,10 @@ export namespace Prisma {
   export type PaymentMaxAggregateOutputType = {
     id: string | null
     amount: number | null
+    pgProvider: string | null
     method: $Enums.PaymentMethod | null
     serviceName: string | null
     status: $Enums.PaymentStatus | null
-    onlineUrl: string | null
-    mobileUrl: string | null
     paidAt: Date | null
     createdAt: Date | null
   }
@@ -5243,11 +5241,10 @@ export namespace Prisma {
   export type PaymentCountAggregateOutputType = {
     id: number
     amount: number
+    pgProvider: number
     method: number
     serviceName: number
     status: number
-    onlineUrl: number
-    mobileUrl: number
     paidAt: number
     createdAt: number
     _all: number
@@ -5265,11 +5262,10 @@ export namespace Prisma {
   export type PaymentMinAggregateInputType = {
     id?: true
     amount?: true
+    pgProvider?: true
     method?: true
     serviceName?: true
     status?: true
-    onlineUrl?: true
-    mobileUrl?: true
     paidAt?: true
     createdAt?: true
   }
@@ -5277,11 +5273,10 @@ export namespace Prisma {
   export type PaymentMaxAggregateInputType = {
     id?: true
     amount?: true
+    pgProvider?: true
     method?: true
     serviceName?: true
     status?: true
-    onlineUrl?: true
-    mobileUrl?: true
     paidAt?: true
     createdAt?: true
   }
@@ -5289,11 +5284,10 @@ export namespace Prisma {
   export type PaymentCountAggregateInputType = {
     id?: true
     amount?: true
+    pgProvider?: true
     method?: true
     serviceName?: true
     status?: true
-    onlineUrl?: true
-    mobileUrl?: true
     paidAt?: true
     createdAt?: true
     _all?: true
@@ -5388,11 +5382,10 @@ export namespace Prisma {
   export type PaymentGroupByOutputType = {
     id: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl: string | null
-    mobileUrl: string | null
     paidAt: Date | null
     createdAt: Date
     _count: PaymentCountAggregateOutputType | null
@@ -5419,11 +5412,10 @@ export namespace Prisma {
   export type PaymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     amount?: boolean
+    pgProvider?: boolean
     method?: boolean
     serviceName?: boolean
     status?: boolean
-    onlineUrl?: boolean
-    mobileUrl?: boolean
     paidAt?: boolean
     createdAt?: boolean
     orders?: boolean | Payment$ordersArgs<ExtArgs>
@@ -5435,11 +5427,10 @@ export namespace Prisma {
   export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     amount?: boolean
+    pgProvider?: boolean
     method?: boolean
     serviceName?: boolean
     status?: boolean
-    onlineUrl?: boolean
-    mobileUrl?: boolean
     paidAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["payment"]>
@@ -5447,11 +5438,10 @@ export namespace Prisma {
   export type PaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     amount?: boolean
+    pgProvider?: boolean
     method?: boolean
     serviceName?: boolean
     status?: boolean
-    onlineUrl?: boolean
-    mobileUrl?: boolean
     paidAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["payment"]>
@@ -5459,16 +5449,15 @@ export namespace Prisma {
   export type PaymentSelectScalar = {
     id?: boolean
     amount?: boolean
+    pgProvider?: boolean
     method?: boolean
     serviceName?: boolean
     status?: boolean
-    onlineUrl?: boolean
-    mobileUrl?: boolean
     paidAt?: boolean
     createdAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "method" | "serviceName" | "status" | "onlineUrl" | "mobileUrl" | "paidAt" | "createdAt", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "pgProvider" | "method" | "serviceName" | "status" | "paidAt" | "createdAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | Payment$ordersArgs<ExtArgs>
     refunds?: boolean | Payment$refundsArgs<ExtArgs>
@@ -5488,11 +5477,10 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       amount: number
+      pgProvider: string
       method: $Enums.PaymentMethod
       serviceName: string
       status: $Enums.PaymentStatus
-      onlineUrl: string | null
-      mobileUrl: string | null
       paidAt: Date | null
       createdAt: Date
     }, ExtArgs["result"]["payment"]>
@@ -5923,11 +5911,10 @@ export namespace Prisma {
   interface PaymentFieldRefs {
     readonly id: FieldRef<"Payment", 'String'>
     readonly amount: FieldRef<"Payment", 'Int'>
+    readonly pgProvider: FieldRef<"Payment", 'String'>
     readonly method: FieldRef<"Payment", 'PaymentMethod'>
     readonly serviceName: FieldRef<"Payment", 'String'>
     readonly status: FieldRef<"Payment", 'PaymentStatus'>
-    readonly onlineUrl: FieldRef<"Payment", 'String'>
-    readonly mobileUrl: FieldRef<"Payment", 'String'>
     readonly paidAt: FieldRef<"Payment", 'DateTime'>
     readonly createdAt: FieldRef<"Payment", 'DateTime'>
   }
@@ -6436,6 +6423,8 @@ export namespace Prisma {
   export type PayletterDetailMinAggregateOutputType = {
     id: string | null
     paymentId: string | null
+    onlineUrl: string | null
+    mobileUrl: string | null
     code: string | null
     message: string | null
     tid: string | null
@@ -6477,6 +6466,8 @@ export namespace Prisma {
   export type PayletterDetailMaxAggregateOutputType = {
     id: string | null
     paymentId: string | null
+    onlineUrl: string | null
+    mobileUrl: string | null
     code: string | null
     message: string | null
     tid: string | null
@@ -6518,6 +6509,8 @@ export namespace Prisma {
   export type PayletterDetailCountAggregateOutputType = {
     id: number
     paymentId: number
+    onlineUrl: number
+    mobileUrl: number
     code: number
     message: number
     tid: number
@@ -6579,6 +6572,8 @@ export namespace Prisma {
   export type PayletterDetailMinAggregateInputType = {
     id?: true
     paymentId?: true
+    onlineUrl?: true
+    mobileUrl?: true
     code?: true
     message?: true
     tid?: true
@@ -6620,6 +6615,8 @@ export namespace Prisma {
   export type PayletterDetailMaxAggregateInputType = {
     id?: true
     paymentId?: true
+    onlineUrl?: true
+    mobileUrl?: true
     code?: true
     message?: true
     tid?: true
@@ -6661,6 +6658,8 @@ export namespace Prisma {
   export type PayletterDetailCountAggregateInputType = {
     id?: true
     paymentId?: true
+    onlineUrl?: true
+    mobileUrl?: true
     code?: true
     message?: true
     tid?: true
@@ -6789,6 +6788,8 @@ export namespace Prisma {
   export type PayletterDetailGroupByOutputType = {
     id: string
     paymentId: string
+    onlineUrl: string | null
+    mobileUrl: string | null
     code: string | null
     message: string | null
     tid: string | null
@@ -6849,6 +6850,8 @@ export namespace Prisma {
   export type PayletterDetailSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    onlineUrl?: boolean
+    mobileUrl?: boolean
     code?: boolean
     message?: boolean
     tid?: boolean
@@ -6891,6 +6894,8 @@ export namespace Prisma {
   export type PayletterDetailSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    onlineUrl?: boolean
+    mobileUrl?: boolean
     code?: boolean
     message?: boolean
     tid?: boolean
@@ -6933,6 +6938,8 @@ export namespace Prisma {
   export type PayletterDetailSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    onlineUrl?: boolean
+    mobileUrl?: boolean
     code?: boolean
     message?: boolean
     tid?: boolean
@@ -6975,6 +6982,8 @@ export namespace Prisma {
   export type PayletterDetailSelectScalar = {
     id?: boolean
     paymentId?: boolean
+    onlineUrl?: boolean
+    mobileUrl?: boolean
     code?: boolean
     message?: boolean
     tid?: boolean
@@ -7013,7 +7022,7 @@ export namespace Prisma {
     transactionDate?: boolean
   }
 
-  export type PayletterDetailOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentId" | "code" | "message" | "tid" | "cid" | "orderNo" | "pgcode" | "serviceName" | "productName" | "payhash" | "payInfo" | "methodInfo" | "domesticFlag" | "billkey" | "cardInfo" | "disposableCupDeposit" | "taxAmount" | "taxfreeAmount" | "nonsettleAmount" | "couponAmount" | "receiptPossibleAmount" | "cashReceiptCode" | "cashReceiptMessage" | "cashReceiptCid" | "cashReceiptDealNo" | "cashReceiptIssueType" | "cashReceiptPayerSid" | "cashReceiptType" | "account_no" | "account_name" | "account_holder" | "bank_code" | "bank_name" | "issue_tid" | "expire_date" | "expire_time" | "transactionDate", ExtArgs["result"]["payletterDetail"]>
+  export type PayletterDetailOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentId" | "onlineUrl" | "mobileUrl" | "code" | "message" | "tid" | "cid" | "orderNo" | "pgcode" | "serviceName" | "productName" | "payhash" | "payInfo" | "methodInfo" | "domesticFlag" | "billkey" | "cardInfo" | "disposableCupDeposit" | "taxAmount" | "taxfreeAmount" | "nonsettleAmount" | "couponAmount" | "receiptPossibleAmount" | "cashReceiptCode" | "cashReceiptMessage" | "cashReceiptCid" | "cashReceiptDealNo" | "cashReceiptIssueType" | "cashReceiptPayerSid" | "cashReceiptType" | "account_no" | "account_name" | "account_holder" | "bank_code" | "bank_name" | "issue_tid" | "expire_date" | "expire_time" | "transactionDate", ExtArgs["result"]["payletterDetail"]>
   export type PayletterDetailInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }
@@ -7032,6 +7041,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       paymentId: string
+      onlineUrl: string | null
+      mobileUrl: string | null
       code: string | null
       message: string | null
       tid: string | null
@@ -7494,6 +7505,8 @@ export namespace Prisma {
   interface PayletterDetailFieldRefs {
     readonly id: FieldRef<"PayletterDetail", 'String'>
     readonly paymentId: FieldRef<"PayletterDetail", 'String'>
+    readonly onlineUrl: FieldRef<"PayletterDetail", 'String'>
+    readonly mobileUrl: FieldRef<"PayletterDetail", 'String'>
     readonly code: FieldRef<"PayletterDetail", 'String'>
     readonly message: FieldRef<"PayletterDetail", 'String'>
     readonly tid: FieldRef<"PayletterDetail", 'String'>
@@ -9202,11 +9215,10 @@ export namespace Prisma {
   export const PaymentScalarFieldEnum: {
     id: 'id',
     amount: 'amount',
+    pgProvider: 'pgProvider',
     method: 'method',
     serviceName: 'serviceName',
     status: 'status',
-    onlineUrl: 'onlineUrl',
-    mobileUrl: 'mobileUrl',
     paidAt: 'paidAt',
     createdAt: 'createdAt'
   };
@@ -9217,6 +9229,8 @@ export namespace Prisma {
   export const PayletterDetailScalarFieldEnum: {
     id: 'id',
     paymentId: 'paymentId',
+    onlineUrl: 'onlineUrl',
+    mobileUrl: 'mobileUrl',
     code: 'code',
     message: 'message',
     tid: 'tid',
@@ -9693,11 +9707,10 @@ export namespace Prisma {
     NOT?: PaymentWhereInput | PaymentWhereInput[]
     id?: StringFilter<"Payment"> | string
     amount?: IntFilter<"Payment"> | number
+    pgProvider?: StringFilter<"Payment"> | string
     method?: EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
     serviceName?: StringFilter<"Payment"> | string
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
-    onlineUrl?: StringNullableFilter<"Payment"> | string | null
-    mobileUrl?: StringNullableFilter<"Payment"> | string | null
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     orders?: OrderListRelationFilter
@@ -9708,11 +9721,10 @@ export namespace Prisma {
   export type PaymentOrderByWithRelationInput = {
     id?: SortOrder
     amount?: SortOrder
+    pgProvider?: SortOrder
     method?: SortOrder
     serviceName?: SortOrder
     status?: SortOrder
-    onlineUrl?: SortOrderInput | SortOrder
-    mobileUrl?: SortOrderInput | SortOrder
     paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
@@ -9726,11 +9738,10 @@ export namespace Prisma {
     OR?: PaymentWhereInput[]
     NOT?: PaymentWhereInput | PaymentWhereInput[]
     amount?: IntFilter<"Payment"> | number
+    pgProvider?: StringFilter<"Payment"> | string
     method?: EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
     serviceName?: StringFilter<"Payment"> | string
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
-    onlineUrl?: StringNullableFilter<"Payment"> | string | null
-    mobileUrl?: StringNullableFilter<"Payment"> | string | null
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     orders?: OrderListRelationFilter
@@ -9741,11 +9752,10 @@ export namespace Prisma {
   export type PaymentOrderByWithAggregationInput = {
     id?: SortOrder
     amount?: SortOrder
+    pgProvider?: SortOrder
     method?: SortOrder
     serviceName?: SortOrder
     status?: SortOrder
-    onlineUrl?: SortOrderInput | SortOrder
-    mobileUrl?: SortOrderInput | SortOrder
     paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
@@ -9761,11 +9771,10 @@ export namespace Prisma {
     NOT?: PaymentScalarWhereWithAggregatesInput | PaymentScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Payment"> | string
     amount?: IntWithAggregatesFilter<"Payment"> | number
+    pgProvider?: StringWithAggregatesFilter<"Payment"> | string
     method?: EnumPaymentMethodWithAggregatesFilter<"Payment"> | $Enums.PaymentMethod
     serviceName?: StringWithAggregatesFilter<"Payment"> | string
     status?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
-    onlineUrl?: StringNullableWithAggregatesFilter<"Payment"> | string | null
-    mobileUrl?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     paidAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
   }
@@ -9776,6 +9785,8 @@ export namespace Prisma {
     NOT?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
     id?: StringFilter<"PayletterDetail"> | string
     paymentId?: StringFilter<"PayletterDetail"> | string
+    onlineUrl?: StringNullableFilter<"PayletterDetail"> | string | null
+    mobileUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     code?: StringNullableFilter<"PayletterDetail"> | string | null
     message?: StringNullableFilter<"PayletterDetail"> | string | null
     tid?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9818,6 +9829,8 @@ export namespace Prisma {
   export type PayletterDetailOrderByWithRelationInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    onlineUrl?: SortOrderInput | SortOrder
+    mobileUrl?: SortOrderInput | SortOrder
     code?: SortOrderInput | SortOrder
     message?: SortOrderInput | SortOrder
     tid?: SortOrderInput | SortOrder
@@ -9863,6 +9876,8 @@ export namespace Prisma {
     AND?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
     OR?: PayletterDetailWhereInput[]
     NOT?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
+    onlineUrl?: StringNullableFilter<"PayletterDetail"> | string | null
+    mobileUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     code?: StringNullableFilter<"PayletterDetail"> | string | null
     message?: StringNullableFilter<"PayletterDetail"> | string | null
     tid?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9905,6 +9920,8 @@ export namespace Prisma {
   export type PayletterDetailOrderByWithAggregationInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    onlineUrl?: SortOrderInput | SortOrder
+    mobileUrl?: SortOrderInput | SortOrder
     code?: SortOrderInput | SortOrder
     message?: SortOrderInput | SortOrder
     tid?: SortOrderInput | SortOrder
@@ -9954,6 +9971,8 @@ export namespace Prisma {
     NOT?: PayletterDetailScalarWhereWithAggregatesInput | PayletterDetailScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PayletterDetail"> | string
     paymentId?: StringWithAggregatesFilter<"PayletterDetail"> | string
+    onlineUrl?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    mobileUrl?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     code?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     message?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     tid?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
@@ -10387,11 +10406,10 @@ export namespace Prisma {
   export type PaymentCreateInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
@@ -10402,11 +10420,10 @@ export namespace Prisma {
   export type PaymentUncheckedCreateInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
@@ -10417,11 +10434,10 @@ export namespace Prisma {
   export type PaymentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
@@ -10432,11 +10448,10 @@ export namespace Prisma {
   export type PaymentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput
@@ -10447,11 +10462,10 @@ export namespace Prisma {
   export type PaymentCreateManyInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
   }
@@ -10459,11 +10473,10 @@ export namespace Prisma {
   export type PaymentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10471,17 +10484,18 @@ export namespace Prisma {
   export type PaymentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayletterDetailCreateInput = {
     id?: string
+    onlineUrl?: string | null
+    mobileUrl?: string | null
     code?: string | null
     message?: string | null
     tid?: string | null
@@ -10524,6 +10538,8 @@ export namespace Prisma {
   export type PayletterDetailUncheckedCreateInput = {
     id?: string
     paymentId: string
+    onlineUrl?: string | null
+    mobileUrl?: string | null
     code?: string | null
     message?: string | null
     tid?: string | null
@@ -10564,6 +10580,8 @@ export namespace Prisma {
 
   export type PayletterDetailUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10606,6 +10624,8 @@ export namespace Prisma {
   export type PayletterDetailUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     paymentId?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10647,6 +10667,8 @@ export namespace Prisma {
   export type PayletterDetailCreateManyInput = {
     id?: string
     paymentId: string
+    onlineUrl?: string | null
+    mobileUrl?: string | null
     code?: string | null
     message?: string | null
     tid?: string | null
@@ -10687,6 +10709,8 @@ export namespace Prisma {
 
   export type PayletterDetailUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10728,6 +10752,8 @@ export namespace Prisma {
   export type PayletterDetailUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     paymentId?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11267,11 +11293,10 @@ export namespace Prisma {
   export type PaymentCountOrderByAggregateInput = {
     id?: SortOrder
     amount?: SortOrder
+    pgProvider?: SortOrder
     method?: SortOrder
     serviceName?: SortOrder
     status?: SortOrder
-    onlineUrl?: SortOrder
-    mobileUrl?: SortOrder
     paidAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -11283,11 +11308,10 @@ export namespace Prisma {
   export type PaymentMaxOrderByAggregateInput = {
     id?: SortOrder
     amount?: SortOrder
+    pgProvider?: SortOrder
     method?: SortOrder
     serviceName?: SortOrder
     status?: SortOrder
-    onlineUrl?: SortOrder
-    mobileUrl?: SortOrder
     paidAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -11295,11 +11319,10 @@ export namespace Prisma {
   export type PaymentMinOrderByAggregateInput = {
     id?: SortOrder
     amount?: SortOrder
+    pgProvider?: SortOrder
     method?: SortOrder
     serviceName?: SortOrder
     status?: SortOrder
-    onlineUrl?: SortOrder
-    mobileUrl?: SortOrder
     paidAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -11350,6 +11373,8 @@ export namespace Prisma {
   export type PayletterDetailCountOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    onlineUrl?: SortOrder
+    mobileUrl?: SortOrder
     code?: SortOrder
     message?: SortOrder
     tid?: SortOrder
@@ -11400,6 +11425,8 @@ export namespace Prisma {
   export type PayletterDetailMaxOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    onlineUrl?: SortOrder
+    mobileUrl?: SortOrder
     code?: SortOrder
     message?: SortOrder
     tid?: SortOrder
@@ -11441,6 +11468,8 @@ export namespace Prisma {
   export type PayletterDetailMinOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    onlineUrl?: SortOrder
+    mobileUrl?: SortOrder
     code?: SortOrder
     message?: SortOrder
     tid?: SortOrder
@@ -12331,11 +12360,10 @@ export namespace Prisma {
   export type PaymentCreateWithoutOrdersInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     refunds?: RefundCreateNestedManyWithoutPaymentInput
@@ -12345,11 +12373,10 @@ export namespace Prisma {
   export type PaymentUncheckedCreateWithoutOrdersInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     refunds?: RefundUncheckedCreateNestedManyWithoutPaymentInput
@@ -12421,11 +12448,10 @@ export namespace Prisma {
   export type PaymentUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refunds?: RefundUpdateManyWithoutPaymentNestedInput
@@ -12435,11 +12461,10 @@ export namespace Prisma {
   export type PaymentUncheckedUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refunds?: RefundUncheckedUpdateManyWithoutPaymentNestedInput
@@ -12760,6 +12785,8 @@ export namespace Prisma {
 
   export type PayletterDetailCreateWithoutPaymentInput = {
     id?: string
+    onlineUrl?: string | null
+    mobileUrl?: string | null
     code?: string | null
     message?: string | null
     tid?: string | null
@@ -12800,6 +12827,8 @@ export namespace Prisma {
 
   export type PayletterDetailUncheckedCreateWithoutPaymentInput = {
     id?: string
+    onlineUrl?: string | null
+    mobileUrl?: string | null
     code?: string | null
     message?: string | null
     tid?: string | null
@@ -12908,6 +12937,8 @@ export namespace Prisma {
 
   export type PayletterDetailUpdateWithoutPaymentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12948,6 +12979,8 @@ export namespace Prisma {
 
   export type PayletterDetailUncheckedUpdateWithoutPaymentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     tid?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12989,11 +13022,10 @@ export namespace Prisma {
   export type PaymentCreateWithoutPayletterDetailInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
@@ -13003,11 +13035,10 @@ export namespace Prisma {
   export type PaymentUncheckedCreateWithoutPayletterDetailInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
@@ -13033,11 +13064,10 @@ export namespace Prisma {
   export type PaymentUpdateWithoutPayletterDetailInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
@@ -13047,11 +13077,10 @@ export namespace Prisma {
   export type PaymentUncheckedUpdateWithoutPayletterDetailInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput
@@ -13061,11 +13090,10 @@ export namespace Prisma {
   export type PaymentCreateWithoutRefundsInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
@@ -13075,11 +13103,10 @@ export namespace Prisma {
   export type PaymentUncheckedCreateWithoutRefundsInput = {
     id?: string
     amount: number
+    pgProvider: string
     method: $Enums.PaymentMethod
     serviceName: string
     status: $Enums.PaymentStatus
-    onlineUrl?: string | null
-    mobileUrl?: string | null
     paidAt?: Date | string | null
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
@@ -13175,11 +13202,10 @@ export namespace Prisma {
   export type PaymentUpdateWithoutRefundsInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
@@ -13189,11 +13215,10 @@ export namespace Prisma {
   export type PaymentUncheckedUpdateWithoutRefundsInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    pgProvider?: StringFieldUpdateOperationsInput | string
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-    onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput

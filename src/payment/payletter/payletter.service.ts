@@ -112,10 +112,12 @@ export class PayletterService extends AbstractPaymentService {
     return data;
   }
 
-  cancelPayment(paymentId: string) {
+  cancelPayment(paymentId: string, reason?: string) {
     // TODO: 결제 취소 구현
     throw new Error('Method not implemented.');
   }
+
+  cancelPaymentPartial(paymentId: string, request: any, reason?: string) {}
 
   verifyCallback(callbackData: any) {
     // TODO: 콜백 검증 구현
@@ -133,6 +135,6 @@ export class PayletterService extends AbstractPaymentService {
   }
 
   getRedirectUrl(paymentId: string) {
-    throw new Error('Method not implemented.');
+    return '';
   }
 }

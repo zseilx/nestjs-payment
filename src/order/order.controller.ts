@@ -9,21 +9,16 @@ export class OrderController {
   @Post()
   async createOrder(@Body() request: CreateOrderRequest) {
     return this.orderService.createOrder(request);
-    // 주문 및 결제 요청 처리
-  }
-
-  @Post('payment-callback')
-  async handlePaymentCallback(@Body() body: any) {
-    // PG사 결제 결과 콜백 처리
   }
 
   @Get(':orderId')
   async getOrder(@Param('orderId') orderId: string) {
-    // 주문 상세 조회
+    return this.orderService.getOrder(orderId);
   }
 
   @Post(':orderId/retry-payment')
   async retryPayment(@Param('orderId') orderId: string) {
+    return this.orderService.retryPayment(orderId);
     // 결제 재요청
   }
 

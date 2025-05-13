@@ -63,11 +63,10 @@ CREATE TABLE "OrderItem" (
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
+    "pgProvider" TEXT NOT NULL,
     "method" "PaymentMethod" NOT NULL,
     "serviceName" TEXT NOT NULL,
     "status" "PaymentStatus" NOT NULL,
-    "onlineUrl" TEXT,
-    "mobileUrl" TEXT,
     "paidAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -78,6 +77,8 @@ CREATE TABLE "Payment" (
 CREATE TABLE "PayletterDetail" (
     "id" TEXT NOT NULL,
     "paymentId" TEXT NOT NULL,
+    "onlineUrl" TEXT,
+    "mobileUrl" TEXT,
     "code" TEXT,
     "message" TEXT,
     "tid" TEXT,

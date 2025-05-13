@@ -72,11 +72,10 @@ model OrderItem {
 model Payment {
   id          String        @id @default(cuid())
   amount      Int
+  pgProvider  String
   method      PaymentMethod // CARD, BANK_TRANSFER, etc.
   serviceName String
   status      PaymentStatus // INITIATED, SUCCESS, FAILED
-  onlineUrl   String?
-  mobileUrl   String?
   paidAt      DateTime?
   createdAt   DateTime      @default(now())
 
@@ -89,6 +88,8 @@ model Payment {
 model PayletterDetail {
   id                    String  @id @default(cuid())
   paymentId             String  @unique
+  onlineUrl             String? // 결제 웹 URL
+  mobileUrl             String? // 결제 모바일 URL
   code                  String? // 결과
   message               String? // 메시지
   tid                   String? // PG 고유 결제번호

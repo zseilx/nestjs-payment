@@ -10,11 +10,17 @@ export abstract class AbstractPaymentService {
 
   abstract cancelPayment(paymentId: string, reason?: string);
 
+  abstract cancelPaymentPartial(
+    paymentId: string,
+    request: any,
+    reason?: string,
+  );
+
   abstract verifyCallback(callbackData: any);
 
   abstract handleCallback(callbackData: any);
 
   abstract handleReturn(returnData: any);
 
-  abstract getRedirectUrl(paymentId: string);
+  abstract getRedirectUrl(paymentId: string): Promise<string> | string;
 }
