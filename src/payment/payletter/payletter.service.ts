@@ -12,9 +12,11 @@ import { AppConfigService } from 'src/config/app-config/app-config.service';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { OrderService } from 'src/order/order.service';
 import { AbstractPaymentService } from '../abstract-payment-service';
+import { CALLBACK_URL_PREFIX, RETURN_URL_PREFIX } from '../payment.controller';
 import {
+  PayletterPaymentsApiRequest,
   PayletterPaymentsFailureResponseDto,
-  PayletterPaymentsRequestDto,
+  PayletterPaymentsRequest,
   PayletterPaymentsSuccessResponseDto,
 } from './dto/payletter-payments.dto';
 import {
@@ -43,7 +45,7 @@ export class PayletterService extends AbstractPaymentService {
   }
 
   async test() {
-    const test = new PayletterPaymentsRequestDto();
+    const test = new PayletterPaymentsApiRequest();
 
     test.client_id = this.PAYLETTER_ID;
 
@@ -83,7 +85,19 @@ export class PayletterService extends AbstractPaymentService {
     this.logger.log(data);
   }
 
-  async requestPayment(request: PayletterPaymentsRequestDto) {
+  async requestPayment(request: PayletterPaymentsRequest) {
+    const apiRequestData: PayletterPaymentsApiRequest =
+      new PayletterPaymentsApiRequest();
+    Object.assign(apiRequestData, request, {
+      client_id: this.PAYLETTER_ID,
+      return_url: `${CALLBACK_URL_PREFIX}/payletter`,
+      callback_url: `${RETURN_URL_PREFIX}/payletter`,
+      custom_parameter: JSON.stringify({
+        successRedirectUrl: request.successRedirectUrl,
+        failureRedirectUrl: request.failureRedirectUrl,
+      }),
+    });
+
     const { data } = await firstValueFrom(
       this.httpService
         .request<PayletterPaymentsSuccessResponseDto>({
@@ -92,9 +106,7 @@ export class PayletterService extends AbstractPaymentService {
           headers: {
             Authorization: `PLKEY ${this.PAYLETTER_API_KEY}`,
           },
-          data: {
-            ...request,
-          },
+          data: apiRequestData,
         })
         .pipe(
           catchError(
@@ -108,6 +120,22 @@ export class PayletterService extends AbstractPaymentService {
           ),
         ),
     );
+    const payment = await this.prismaService.payment.create({
+      data: {
+        pgProvider: 'payletter',
+        amount: apiRequestData.amount,
+        status: 'INITIATED',
+        method: 'CARD',
+        serviceName: apiRequestData.service_name || '페이먼트 서비스',
+      },
+    });
+
+    await this.prismaService.payletterDetail.create({
+      data: {
+        paymentId: payment.id,
+        ...apiRequestData.getCamelCase(),
+      },
+    });
 
     return data;
   }

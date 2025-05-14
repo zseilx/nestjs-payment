@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { PgProvider } from 'src/payment/abstract-payment-service';
-import { PayletterPaymentsRequestDto } from 'src/payment/payletter/dto/payletter-payments.dto';
+import { PayletterPaymentsRequest } from 'src/payment/payletter/dto/payletter-payments.dto';
 import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
 import { ProductService } from 'src/product/product.service';
 import { CreateOrderRequest } from './dto/create-order.request';
@@ -23,7 +23,7 @@ export class OrderService {
 
   // TODO: 상세 구현
   async createOrder(request: CreateOrderRequest) {
-    const paymentRequest = new PayletterPaymentsRequestDto();
+    const paymentRequest = new PayletterPaymentsRequest();
 
     const productIds = request.items.map((item) => item.productId);
 
@@ -70,6 +70,10 @@ export class OrderService {
       orderItems.length === 1
         ? `${mostExpensive.name}`
         : `${mostExpensive.name} 외 ${orderItems.length - 1}건`;
+
+    paymentRequest.pgcode = request.pgcode;
+    paymentRequest.amount = totalAmount;
+    paymentRequest.product_name = summaryTitle;
 
     // 이후 로직에서 totalAmount, summaryTitle 사용 가능
 

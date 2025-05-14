@@ -1,11 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
+import { PayletterPGCode } from '../payment-method.enum';
 
 export class PayletterPaymentsSuccessResponseDto {
   token: number;
@@ -17,18 +19,25 @@ export class PayletterPaymentsFailureResponseDto {
   message: string;
 }
 
-export class PayletterPaymentsRequestDto {
-  @ApiProperty({ description: '결제수단 코드' })
+export class PayletterPaymentsRequest {
+  @ApiProperty({
+    description: '결제 성공 시 redirect url',
+  })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
-  pgcode: string;
+  successRedirectUrl?: string;
 
-  @ApiProperty({ description: '가맹점 아이디' })
+  @ApiProperty({
+    description: '결제 실패 시 redirect url',
+  })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
-  client_id: string;
+  failureRedirectUrl?: string;
+
+  @ApiProperty({ description: '결제수단 코드' })
+  @IsIn([PayletterPGCode])
+  @IsNotEmpty()
+  pgcode: PayletterPGCode;
 
   @ApiPropertyOptional({
     description: '결제 서비스명 (삼성페이, SSG페이는 필수)',
@@ -117,6 +126,34 @@ export class PayletterPaymentsRequestDto {
   @MaxLength(1024)
   custom_parameter?: string;
 
+  @ApiPropertyOptional({ description: 'In-app 사용 여부 (Y:사용, N:미사용)' })
+  @IsString()
+  @IsOptional()
+  @MaxLength(1)
+  inapp_flag?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'In-app 에서 ISP / KFTC(계좌이체)결제 취소(중단)시 연결할 앱 스키마',
+  })
+  @IsString()
+  @IsOptional()
+  @MaxLength(256)
+  app_cancel_url?: string;
+
+  @ApiPropertyOptional({ description: '일회용 컵 보증금' })
+  @IsNumber()
+  @IsOptional()
+  disposable_cup_deposit?: number;
+}
+
+export class PayletterPaymentsApiRequest extends PayletterPaymentsRequest {
+  @ApiProperty({ description: '가맹점 아이디' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(20)
+  client_id: string;
+
   @ApiProperty({ description: '결제 완료 후 연결할 웹 페이지 URL' })
   @IsString()
   @IsNotEmpty()
@@ -135,12 +172,6 @@ export class PayletterPaymentsRequestDto {
   @MaxLength(256)
   cancel_url?: string;
 
-  @ApiPropertyOptional({ description: 'In-app 사용 여부 (Y:사용, N:미사용)' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(1)
-  inapp_flag?: string;
-
   @ApiPropertyOptional({
     description: 'In-app 에서 ISP / KFTC(계좌이체)결제시 연결할 앱 스키마',
   })
@@ -148,15 +179,6 @@ export class PayletterPaymentsRequestDto {
   @IsOptional()
   @MaxLength(256)
   app_return_url?: string;
-
-  @ApiPropertyOptional({
-    description:
-      'In-app 에서 ISP / KFTC(계좌이체)결제 취소(중단)시 연결할 앱 스키마',
-  })
-  @IsString()
-  @IsOptional()
-  @MaxLength(256)
-  app_cancel_url?: string;
 
   @ApiPropertyOptional({ description: '가상계좌 채번시 만료일 설정(YYYYMMDD)' })
   @IsString()
@@ -170,11 +192,6 @@ export class PayletterPaymentsRequestDto {
   @MaxLength(4)
   expire_time?: string;
 
-  @ApiPropertyOptional({ description: '일회용 컵 보증금' })
-  @IsNumber()
-  @IsOptional()
-  disposable_cup_deposit?: number;
-
   @ApiPropertyOptional({
     description:
       '카드사 인증창 내 가맹점명 노출 여부 (Y:노출, N: Payletter 노출)',
@@ -183,4 +200,37 @@ export class PayletterPaymentsRequestDto {
   @IsOptional()
   @MaxLength(1)
   company_name_flag?: string;
+
+  getCamelCase() {
+    return {
+      clientId: this.client_id,
+      returnUrl: this.return_url,
+      callbackUrl: this.callback_url,
+      cancelUrl: this.cancel_url,
+      appReturnUrl: this.app_return_url,
+      expireDate: this.expire_date,
+      expireTime: this.expire_time,
+      companyNameFlag: this.company_name_flag,
+      successRedirectUrl: this.successRedirectUrl,
+      failureRedirectUrl: this.failureRedirectUrl,
+      pgcode: this.pgcode,
+      serviceName: this.service_name,
+      userId: this.user_id,
+      userName: this.user_name,
+      orderNo: this.order_no,
+      amount: this.amount,
+      taxfreeAmount: this.taxfree_amount,
+      taxAmount: this.tax_amount,
+      productName: this.product_name,
+      emailFlag: this.email_flag,
+      emailAddr: this.email_addr,
+      autopayFlag: this.autopay_flag,
+      receiptFlag: this.receipt_flag,
+      keyinFlag: this.keyin_flag,
+      customParameter: this.custom_parameter,
+      inappFlag: this.inapp_flag,
+      appCancelUrl: this.app_cancel_url,
+      disposableCupDeposit: this.disposable_cup_deposit,
+    };
+  }
 }

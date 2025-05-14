@@ -3,11 +3,14 @@ import { PgProvider } from './abstract-payment-service';
 import { PaymentServiceFactory } from './payment-service.factory';
 import { PgProviderPipe } from './pg-provider.pipe';
 
+export const CALLBACK_URL_PREFIX = ':paymentId/callback/';
+export const RETURN_URL_PREFIX = ':paymentId/return/';
+
 @Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentServiceFactory: PaymentServiceFactory) {}
 
-  @Post(':paymentId/callback/:pgProvider')
+  @Post(`${CALLBACK_URL_PREFIX}:pgProvider`)
   handleCallback(
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProvider,
@@ -19,7 +22,7 @@ export class PaymentController {
       .handleCallback(request);
   }
 
-  @Post(':paymentId/return/:pgProvider')
+  @Post(`${RETURN_URL_PREFIX}:pgProvider`)
   handleReturn(
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProvider,
