@@ -5,8 +5,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { OrderStatus } from 'generated/prisma';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { PgProvider } from 'src/payment/abstract-payment-service';
+import { CreatePaymentRequest } from 'src/payment/dto/create-payment.request';
 import { PayletterPaymentsRequest } from 'src/payment/payletter/dto/payletter-payments.dto';
 import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
 import { ProductService } from 'src/product/product.service';
@@ -23,6 +25,7 @@ export class OrderService {
 
   // TODO: 상세 구현
   async createOrder(request: CreateOrderRequest) {
+    const userId = 'test';
     const paymentRequest = new PayletterPaymentsRequest();
 
     const productIds = request.items.map((item) => item.productId);
@@ -77,19 +80,23 @@ export class OrderService {
 
     // 이후 로직에서 totalAmount, summaryTitle 사용 가능
 
-    // const order = this.prismaService.order.create({
-    //   data: {
-    //     userId: 'test',
-    //   },
-    // });
+    const order = this.prismaService.order.create({
+      data: {
+        userId,
+        status: OrderStatus.PENDING,
+        totalAmount,
+      },
+    });
 
-    // const payment = await this.paymentServiceFactory
-    //   .getProvider()
-    //   .requestPayment(paymentRequest);
+    const paymentResponse = await this.paymentServiceFactory
+      .getProvider(request.pg)
+      .requestPayment({
+        successRedirectUrl: request.successRedirectUrl,
+        failureRedirectUrl: request.successRedirectUrl,
+        amount: totalAmount,
+      } as CreatePaymentRequest);
 
-    return {
-      url: '',
-    };
+    return paymentResponse;
   }
 
   // TODO: 완성 필요

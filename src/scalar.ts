@@ -18,7 +18,7 @@ export const scalarHtml = `
     <!-- Initialize the Scalar API Reference -->
     <script>
       Scalar.createApiReference('#app', {
-        url: '/api-back/openapi.json',
+        url: '/openapi.json',
       })
     </script>
   </body>

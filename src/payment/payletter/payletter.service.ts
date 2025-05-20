@@ -12,11 +12,11 @@ import { AppConfigService } from 'src/config/app-config/app-config.service';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { OrderService } from 'src/order/order.service';
 import { AbstractPaymentService } from '../abstract-payment-service';
+import { CreatePaymentRequest } from '../dto/create-payment.request';
 import { CALLBACK_URL_PREFIX, RETURN_URL_PREFIX } from '../payment.controller';
 import {
   PayletterPaymentsApiRequest,
   PayletterPaymentsFailureResponseDto,
-  PayletterPaymentsRequest,
   PayletterPaymentsSuccessResponseDto,
 } from './dto/payletter-payments.dto';
 import {
@@ -85,7 +85,7 @@ export class PayletterService extends AbstractPaymentService {
     this.logger.log(data);
   }
 
-  async requestPayment(request: PayletterPaymentsRequest) {
+  async requestPayment(request: CreatePaymentRequest) {
     const apiRequestData: PayletterPaymentsApiRequest =
       new PayletterPaymentsApiRequest();
     Object.assign(apiRequestData, request, {
@@ -137,7 +137,10 @@ export class PayletterService extends AbstractPaymentService {
       },
     });
 
-    return data;
+    return {
+      onlineUrl: data.online_url,
+      mobileUrl: data.mobile_url,
+    };
   }
 
   cancelPayment(paymentId: string, reason?: string) {

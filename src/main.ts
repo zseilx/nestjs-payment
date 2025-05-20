@@ -15,8 +15,8 @@ async function bootstrap() {
     credentials: true,
   });
   const config = new DocumentBuilder()
-    .setTitle('Timely GPT AI Backend API')
-    .setDescription('Timely GPT AI Backend API 설명')
+    .setTitle('Nestjs Product-Order-Payment Service')
+    .setDescription('개인 프로젝트')
     .setVersion('1.0')
     .addTag('timely-gpt-ai-backend')
     .addBearerAuth(
@@ -36,7 +36,7 @@ async function bootstrap() {
     deepScanRoutes: true,
   });
   documentFactory.security = [{ 'access-token': [] }];
-  expressApp.get('/api-back/openapi.json', (req: Request, res: Response) => {
+  expressApp.get('/openapi.json', (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(documentFactory);
   });
