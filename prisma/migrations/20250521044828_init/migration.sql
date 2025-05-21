@@ -2,10 +2,16 @@
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'PARTIALLY_CANCELED', 'CANCELED');
 
 -- CreateEnum
+CREATE TYPE "PgProviderType" AS ENUM ('PAYLETTER');
+
+-- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('INITIATED', 'SUCCESS', 'FAILED');
 
 -- CreateEnum
 CREATE TYPE "PaymentMethod" AS ENUM ('CARD', 'BANK_TRANSFER', 'VIRTUAL_ACCOUNT', 'MOBILE', 'POINT', 'VOUCHER', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ProductType" AS ENUM ('CREDIT');
 
 -- CreateTable
 CREATE TABLE "Product" (
@@ -16,6 +22,7 @@ CREATE TABLE "Product" (
     "imageUrl" TEXT,
     "currency" TEXT NOT NULL DEFAULT 'KRW',
     "stock" INTEGER,
+    "type" "ProductType" NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "isRefundable" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -28,18 +35,13 @@ CREATE TABLE "Product" (
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "totalAmount" INTEGER NOT NULL,
+    "totalAmount" DECIMAL(65,30) NOT NULL,
     "status" "OrderStatus" NOT NULL,
-    "paidAmount" INTEGER,
-    "refundedAmount" INTEGER,
+    "paidAmount" DECIMAL(65,30),
+    "refundedAmount" DECIMAL(65,30),
     "paymentId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "externalOrderNo" TEXT,
-    "summaryTitle" TEXT,
-    "couponAmount" INTEGER,
-    "discountAmount" INTEGER,
-    "disposableCupDeposit" INTEGER,
 
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
@@ -51,7 +53,7 @@ CREATE TABLE "OrderItem" (
     "orderId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "canceledQty" INTEGER NOT NULL DEFAULT 0,
-    "unitPrice" INTEGER NOT NULL,
+    "unitPrice" DECIMAL(65,30) NOT NULL,
     "productName" TEXT NOT NULL,
     "optionName" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -62,8 +64,8 @@ CREATE TABLE "OrderItem" (
 -- CreateTable
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL,
-    "amount" INTEGER NOT NULL,
-    "pgProvider" TEXT NOT NULL,
+    "amount" DECIMAL(65,30) NOT NULL,
+    "pgProvider" "PgProviderType" NOT NULL,
     "method" "PaymentMethod" NOT NULL,
     "serviceName" TEXT NOT NULL,
     "status" "PaymentStatus" NOT NULL,
@@ -135,6 +137,9 @@ CREATE TABLE "Refund" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PayletterDetail_paymentId_key" ON "PayletterDetail"("paymentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PayletterDetail_tid_key" ON "PayletterDetail"("tid");
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -1,12 +1,7 @@
 import { CreatePaymentRequest } from './dto/create-payment.request';
 import { CreatePaymentResponse } from './dto/create-payment.response';
 
-export enum PgProvider {
-  PAYLETTER = 'PAYLETTER',
-}
-
 export abstract class AbstractPaymentService {
-  protected readonly pgProvider: PgProvider;
   constructor() {}
 
   abstract requestPayment(

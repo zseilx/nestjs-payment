@@ -13,6 +13,7 @@ export class AppConfigService {
     'PAYLETTER_API_KEY',
     'PAYLETTER_API_URL',
     'PAYLETTER_ID',
+    'SERVER_HOST',
   ] as const;
 
   constructor(configService: ConfigService) {

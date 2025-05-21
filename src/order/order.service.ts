@@ -3,19 +3,22 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { OrderStatus } from 'generated/prisma';
+import { Order, OrderStatus, PgProviderType } from 'generated/prisma';
+import { Decimal } from 'generated/prisma/runtime/library';
 import { PrismaService } from 'src/config/prisma/prisma.service';
-import { PgProvider } from 'src/payment/abstract-payment-service';
 import { CreatePaymentRequest } from 'src/payment/dto/create-payment.request';
-import { PayletterPaymentsRequest } from 'src/payment/payletter/dto/payletter-payments.dto';
 import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
+import { processProductRequest } from 'src/product/dto/process-product.request';
 import { ProductService } from 'src/product/product.service';
 import { CreateOrderRequest } from './dto/create-order.request';
 
 @Injectable()
 export class OrderService {
+  private readonly logger = new Logger(OrderService.name);
+
   constructor(
     @Inject(forwardRef(() => PaymentServiceFactory))
     private readonly paymentServiceFactory: PaymentServiceFactory,
@@ -25,9 +28,6 @@ export class OrderService {
 
   // TODO: 상세 구현
   async createOrder(request: CreateOrderRequest) {
-    const userId = 'test';
-    const paymentRequest = new PayletterPaymentsRequest();
-
     const productIds = request.items.map((item) => item.productId);
 
     // 2. 중복 제거 (선택 사항)
@@ -51,18 +51,20 @@ export class OrderService {
         throw new NotFoundException(
           `상품 ${item.productId}을 찾을 수 없습니다`,
         );
+      // const price = product.price;
+      const totalPrice = new Decimal(product.price).mul(item.quantity);
       return {
         productId: product.id,
         name: product.name,
         unitPrice: product.price,
         quantity: item.quantity,
-        totalPrice: product.price * item.quantity,
+        totalPrice,
       };
     });
 
     const totalAmount = orderItems.reduce(
-      (sum, item) => sum + item.totalPrice,
-      0,
+      (sum, item) => sum.add(item.totalPrice),
+      new Decimal(0),
     );
 
     const mostExpensive = orderItems.reduce((max, item) => {
@@ -71,32 +73,52 @@ export class OrderService {
 
     const summaryTitle =
       orderItems.length === 1
-        ? `${mostExpensive.name}`
-        : `${mostExpensive.name} 외 ${orderItems.length - 1}건`;
+        ? `${mostExpensive.name} ${mostExpensive.quantity}개`
+        : `${mostExpensive.name} ${mostExpensive.quantity}개 외 ${orderItems.length - 1}건`;
 
-    paymentRequest.pgcode = request.pgcode;
-    paymentRequest.amount = totalAmount;
-    paymentRequest.product_name = summaryTitle;
+    let order: Order | null = null;
+    try {
+      order = await this.prismaService.order.create({
+        data: {
+          userId: request.userId,
+          status: OrderStatus.PENDING,
+          totalAmount,
+        },
+      });
 
-    // 이후 로직에서 totalAmount, summaryTitle 사용 가능
+      const paymentResponse = await this.paymentServiceFactory
+        .getProvider(request.pg)
+        .requestPayment({
+          successRedirectUrl: request.successRedirectUrl,
+          failureRedirectUrl: request.successRedirectUrl,
+          cancelRedirectUrl: request.cancelRedirectUrl,
+          userId: request.userId,
+          amount: totalAmount,
+          productName: summaryTitle,
+          paymentMethod: request.paymentMethod,
+          orderId: order.id,
+        } as CreatePaymentRequest);
 
-    const order = this.prismaService.order.create({
-      data: {
-        userId,
-        status: OrderStatus.PENDING,
-        totalAmount,
-      },
-    });
+      await this.prismaService.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          paymentId: paymentResponse.paymentId,
+        },
+      });
 
-    const paymentResponse = await this.paymentServiceFactory
-      .getProvider(request.pg)
-      .requestPayment({
-        successRedirectUrl: request.successRedirectUrl,
-        failureRedirectUrl: request.successRedirectUrl,
-        amount: totalAmount,
-      } as CreatePaymentRequest);
-
-    return paymentResponse;
+      return paymentResponse;
+    } catch (err) {
+      this.logger.error(err);
+      if (order?.id) {
+        await this.prismaService.order.update({
+          where: { id: order.id },
+          data: { status: OrderStatus.FAILED },
+        });
+      }
+      throw err;
+    }
   }
 
   // TODO: 완성 필요
@@ -125,32 +147,53 @@ export class OrderService {
     }
 
     return this.paymentServiceFactory
-      .getProvider(order.payment.pgProvider as PgProvider)
+      .getProvider(order.payment.pgProvider as PgProviderType)
       .getRedirectUrl(order.payment.id);
   }
 
   // TODO: 상세 구현
-  async fulfillOrder(orderId: string) {
-    const order = await this.prismaService.order.findUnique({
+  async fulfillOrder(orderId: string, paidAmount: number | Decimal) {
+    const checkOrder = await this.prismaService.order.findUnique({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!checkOrder) {
+      throw new NotFoundException(
+        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+      );
+    } else if (checkOrder.status !== OrderStatus.PENDING) {
+      this.logger.log(`이미 상품 지급이 완료된 주문입니다. ${orderId}`);
+      return;
+    }
+
+    const order = await this.prismaService.order.update({
+      where: {
+        id: orderId,
+      },
       include: {
         orderItems: true,
       },
-      where: {
-        id: orderId,
+      data: {
+        paidAmount: paidAmount,
+        status: OrderStatus.PAID,
       },
     });
 
-    if (!order || !order.orderItems || order.orderItems.length <= 0) {
-      throw new NotFoundException(
-        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
-      );
-    }
+    const products: processProductRequest[] = order.orderItems.map((item) => {
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+      };
+    });
 
     // 주문 상품 지급 절차
+    await this.productService.processProducts(products);
   }
 
   // TODO: 상세 구현
-  async cancelOrder(orderId: string, reason?: string) {
+  async cancelOrder(orderId: string, request: any) {
     const order = await this.prismaService.order.findUnique({
       include: {
         payment: true,
@@ -170,12 +213,12 @@ export class OrderService {
     // 주문 상품 회수
 
     return this.paymentServiceFactory
-      .getProvider(order.payment.pgProvider as PgProvider)
-      .cancelPayment(order.payment.id, reason);
+      .getProvider(order.payment.pgProvider as PgProviderType)
+      .cancelPayment(order.payment.id, request);
   }
 
   // TODO: 상세 구현
-  async cancelOrderPartial(orderId: string, request: any, reason?: string) {
+  async cancelOrderPartial(orderId: string, request: any) {
     const order = await this.prismaService.order.findUnique({
       include: {
         payment: true,
@@ -196,7 +239,7 @@ export class OrderService {
     // 주문 상품 회수
 
     return this.paymentServiceFactory
-      .getProvider(order.payment.pgProvider as PgProvider)
-      .cancelPaymentPartial(order.payment.id, request, reason);
+      .getProvider(order.payment.pgProvider as PgProviderType)
+      .cancelPaymentPartial(order.payment.id, request);
   }
 }

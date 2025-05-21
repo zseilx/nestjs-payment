@@ -3,16 +3,15 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
-  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
+  IsUrl,
   ValidateNested,
 } from 'class-validator';
-import { PgProvider } from 'src/payment/abstract-payment-service';
-import { PayletterPGCode } from 'src/payment/payletter/payment-method.enum';
+import { PaymentMethod, PgProviderType } from 'generated/prisma';
 
 class OrderItemInput {
   @ApiProperty({ description: '상품 ID' })
@@ -26,11 +25,16 @@ class OrderItemInput {
 }
 
 export class CreateOrderRequest {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  userId: string;
+
   @ApiProperty({
     description: '결제 성공 시 redirect url',
     example: 'http://localhost',
   })
-  @IsString()
+  @IsUrl({ require_tld: false })
   @IsNotEmpty()
   successRedirectUrl: string;
 
@@ -38,28 +42,36 @@ export class CreateOrderRequest {
     description: '결제 실패 시 redirect url',
     example: 'http://localhost',
   })
-  @IsString()
+  @IsUrl({ require_tld: false })
   @IsNotEmpty()
   failureRedirectUrl: string;
 
+  @ApiProperty({
+    description: '결제 취소 시 redirect url',
+    example: 'http://localhost',
+  })
+  @IsUrl({ require_tld: false })
+  @IsNotEmpty()
+  cancelRedirectUrl: string;
+
   @ApiPropertyOptional({ description: '원하는 PG사 선택' })
   @IsOptional()
-  @IsEnum(PgProvider)
-  pg: PgProvider = PgProvider.PAYLETTER;
+  @IsEnum(PgProviderType)
+  pg: PgProviderType = PgProviderType.PAYLETTER;
 
-  @ApiProperty({ description: '결제수단 코드' })
-  @IsIn([PayletterPGCode])
+  @ApiProperty({
+    description: '주문 상품 목록',
+    type: OrderItemInput,
+    isArray: true,
+  })
   @IsNotEmpty()
-  pgcode: PayletterPGCode;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItemInput)
   items: OrderItemInput[];
 
+  @ApiProperty({ description: '결제 수단', enum: PaymentMethod })
   @IsNotEmpty()
-  // TODO: Enum으로 변경
-  // @IsEnum()
-  @IsIn(['CARD', 'BANK_TRANSFER', 'VIRTUAL_ACCOUNT'])
-  paymentMethod: string;
+  @IsEnum(PaymentMethod)
+  paymentMethod: PaymentMethod;
 }

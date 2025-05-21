@@ -7,7 +7,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { PayletterPGCode } from '../payment-method.enum';
+import { PayletterPGCode } from '../payletter-method.enum';
 
 export class PayletterPaymentsSuccessResponseDto {
   token: number;
@@ -203,10 +203,10 @@ export class PayletterPaymentsApiRequest extends PayletterPaymentsRequest {
 
   getCamelCase() {
     return {
-      clientId: this.client_id,
-      returnUrl: this.return_url,
-      callbackUrl: this.callback_url,
-      cancelUrl: this.cancel_url,
+      // clientId: this.client_id, // Prisma에서 기록 안하기에 필요 없음
+      // returnUrl: this.return_url, // Prisma에서 기록 안하기에 필요 없음
+      // callbackUrl: this.callback_url, // Prisma에서 기록 안하기에 필요 없음
+      // cancelUrl: this.cancel_url, // Prisma에서 기록 안하기에 필요 없음
       appReturnUrl: this.app_return_url,
       expireDate: this.expire_date,
       expireTime: this.expire_time,

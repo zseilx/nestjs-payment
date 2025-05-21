@@ -15,17 +15,18 @@ datasource db {
 }
 
 model Product {
-  id           String   @id @default(cuid())
+  id           String      @id @default(cuid())
   name         String // 상품 이름
   description  String? // 상품 설명
-  price        Int // 단가 (원 단위, VAT 포함)
+  price        Decimal // 단가 (원 단위, VAT 포함)
   imageUrl     String?
-  currency     String   @default("KRW") // 통화 단위 (기본: KRW)
+  currency     String      @default("KRW") // 통화 단위 (기본: KRW)
   stock        Int? // 재고 수량 (재고 관리 안 하면 생략 가능)
-  isActive     Boolean  @default(true) // 판매 중지 여부
-  isRefundable Boolean  @default(true) // 환불 가능 여부
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  type         ProductType
+  isActive     Boolean     @default(true) // 판매 중지 여부
+  isRefundable Boolean     @default(true) // 환불 가능 여부
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   orderItems OrderItem[]
 }
@@ -33,10 +34,10 @@ model Product {
 model Order {
   id             String      @id @default(cuid())
   userId         String // 주문자
-  totalAmount    Int // 주문 전체 금액 (정상가 * 수량 합)
+  totalAmount    Decimal // 주문 전체 금액 (정상가 * 수량 합)
   status         OrderStatus // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
-  paidAmount     Int? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
-  refundedAmount Int? // 환불된 총 금액 (부분 환불 고려)
+  paidAmount     Decimal? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
+  refundedAmount Decimal? // 환불된 총 금액 (부분 환불 고려)
   paymentId      String? // 결제 ID
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
@@ -52,7 +53,7 @@ model OrderItem {
   orderId     String
   quantity    Int
   canceledQty Int      @default(0) // 부분 취소된 수량
-  unitPrice   Int // 주문 당시 단가
+  unitPrice   Decimal // 주문 당시 단가
   productName String // 주문 당시 상품명 (캐시)
   optionName  String? // ex: "색상: 블랙 / 사이즈: L"
   createdAt   DateTime @default(now())
@@ -64,14 +65,14 @@ model OrderItem {
 }
 
 model Payment {
-  id          String        @id @default(cuid())
-  amount      Int
-  pgProvider  String
+  id          String         @id @default(cuid())
+  amount      Decimal
+  pgProvider  PgProviderType
   method      PaymentMethod // CARD, BANK_TRANSFER, etc.
   serviceName String
   status      PaymentStatus // INITIATED, SUCCESS, FAILED
   paidAt      DateTime?
-  createdAt   DateTime      @default(now())
+  createdAt   DateTime       @default(now())
 
   orders  Order[]
   refunds Refund[]
@@ -86,7 +87,7 @@ model PayletterDetail {
   mobileUrl             String? // 결제 모바일 URL
   code                  String? // 결과
   message               String? // 메시지
-  tid                   String? // PG 고유 결제번호
+  tid                   String? @unique // PG 고유 결제번호
   cid                   String? // PG 승인번호
   orderNo               String? // PG 가맹점 주문 번호
   pgcode                String // PG 코드
@@ -105,11 +106,11 @@ model PayletterDetail {
   couponAmount          Int? // 쿠폰 금액 (페이코만 적용)
   receiptPossibleAmount Int? // 현금영수증 가능 금액
   // 현금 영수증
-  cashReceiptCode       String? // 현금영수증 - 결과
-  cashReceiptMessage    String? // 현금영수증 - 메시지
   cashReceiptCid        String? // 현금영수증 - 승인번호
+  cashReceiptCode       String? // 현금영수증 - 결과
   cashReceiptDealNo     String? // 현금영수증 - 발급시 주문번호
   cashReceiptIssueType  String? // 현금영수증 - 발행 구분
+  cashReceiptMessage    String? // 현금영수증 - 메시지
   cashReceiptPayerSid   String? // 현금영수증 - 신분확인 번호
   cashReceiptType       String? // 현금영수증 - 거래자 구분
   // 가상 계좌
@@ -133,7 +134,7 @@ model Refund {
   orderId     String? // 전체 주문 환불 시 사용
   orderItemId String?
   reason      String?
-  amount      Int
+  amount      Decimal
   quantity    Int?
   refundedAt  DateTime?
 
@@ -147,6 +148,11 @@ enum OrderStatus {
   PAID
   PARTIALLY_CANCELED
   CANCELED
+  FAILED
+}
+
+enum PgProviderType {
+  PAYLETTER
 }
 
 enum PaymentStatus {
@@ -162,5 +168,37 @@ enum PaymentMethod {
   MOBILE
   POINT
   VOUCHER
+  BOOK
+  CULTURE
+  SMART_CULTURE
+  HAPPY_MONEY
+  MOBILE_POP
+  TEEN_CASH
+  T_MONEY
+  CVS
+  EGG_MONEY
+  ON_CASH
+  PHONE_BILL
+  CASH_BEE
+  KAKAO_PAY
+  PAYCO
+  CHECK_PAY
+  TOSS
+  SSG_PAY
+  NAVER_PAY
+  SAMSUNG_PAY
+  APPLE_PAY
   OTHER
+}
+
+/// 상품 유형 (ProductType)
+enum ProductType {
+  CREDIT
+  // DIGITAL // 디지털 상품 (예: 캐시, 쿠폰, 포인트 등 즉시 지급)
+  // PHYSICAL // 실물 상품 (배송 필요, 예: 굿즈, 책 등)
+  // SUBSCRIPTION // 구독 상품 (예: 월간 이용권, 멤버십 등)
+  // LICENSE // 라이선스 상품 (예: 소프트웨어 키, API 키 등)
+  // SERVICE // 서비스형 상품 (예: 전문가 연결, 온라인 교육 등)
+  // EVENT // 이벤트성 상품 (예: 추첨권, 기프티콘 등)
+  // VIRTUAL // 가상자산 상품 (예: NFT, 디지털 소유권 등)
 }

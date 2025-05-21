@@ -128,6 +128,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   imageUrl: 'imageUrl',
   currency: 'currency',
   stock: 'stock',
+  type: 'type',
   isActive: 'isActive',
   isRefundable: 'isRefundable',
   createdAt: 'createdAt',
@@ -143,12 +144,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   refundedAmount: 'refundedAmount',
   paymentId: 'paymentId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  externalOrderNo: 'externalOrderNo',
-  summaryTitle: 'summaryTitle',
-  couponAmount: 'couponAmount',
-  discountAmount: 'discountAmount',
-  disposableCupDeposit: 'disposableCupDeposit'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.OrderItemScalarFieldEnum = {
@@ -199,11 +195,11 @@ exports.Prisma.PayletterDetailScalarFieldEnum = {
   nonsettleAmount: 'nonsettleAmount',
   couponAmount: 'couponAmount',
   receiptPossibleAmount: 'receiptPossibleAmount',
-  cashReceiptCode: 'cashReceiptCode',
-  cashReceiptMessage: 'cashReceiptMessage',
   cashReceiptCid: 'cashReceiptCid',
+  cashReceiptCode: 'cashReceiptCode',
   cashReceiptDealNo: 'cashReceiptDealNo',
   cashReceiptIssueType: 'cashReceiptIssueType',
+  cashReceiptMessage: 'cashReceiptMessage',
   cashReceiptPayerSid: 'cashReceiptPayerSid',
   cashReceiptType: 'cashReceiptType',
   account_no: 'account_no',
@@ -242,11 +238,20 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.ProductType = exports.$Enums.ProductType = {
+  CREDIT: 'CREDIT'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
   PARTIALLY_CANCELED: 'PARTIALLY_CANCELED',
-  CANCELED: 'CANCELED'
+  CANCELED: 'CANCELED',
+  FAILED: 'FAILED'
+};
+
+exports.PgProviderType = exports.$Enums.PgProviderType = {
+  PAYLETTER: 'PAYLETTER'
 };
 
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {
@@ -256,6 +261,26 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   MOBILE: 'MOBILE',
   POINT: 'POINT',
   VOUCHER: 'VOUCHER',
+  BOOK: 'BOOK',
+  CULTURE: 'CULTURE',
+  SMART_CULTURE: 'SMART_CULTURE',
+  HAPPY_MONEY: 'HAPPY_MONEY',
+  MOBILE_POP: 'MOBILE_POP',
+  TEEN_CASH: 'TEEN_CASH',
+  T_MONEY: 'T_MONEY',
+  CVS: 'CVS',
+  EGG_MONEY: 'EGG_MONEY',
+  ON_CASH: 'ON_CASH',
+  PHONE_BILL: 'PHONE_BILL',
+  CASH_BEE: 'CASH_BEE',
+  KAKAO_PAY: 'KAKAO_PAY',
+  PAYCO: 'PAYCO',
+  CHECK_PAY: 'CHECK_PAY',
+  TOSS: 'TOSS',
+  SSG_PAY: 'SSG_PAY',
+  NAVER_PAY: 'NAVER_PAY',
+  SAMSUNG_PAY: 'SAMSUNG_PAY',
+  APPLE_PAY: 'APPLE_PAY',
   OTHER: 'OTHER'
 };
 

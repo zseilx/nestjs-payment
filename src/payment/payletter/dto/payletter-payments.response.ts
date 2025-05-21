@@ -23,6 +23,18 @@ export class CashReceipt {
 
   @ApiProperty({ description: '현금영수증 유형' })
   type: string;
+
+  toCamelCase() {
+    return {
+      cashReceiptCid: this.cid,
+      cashReceiptCode: this.code,
+      cashReceiptDealNo: this.deal_no,
+      cashReceiptIssueType: this.issue_type,
+      cashReceiptMessage: this.message,
+      cashReceiptPayerSid: this.payer_sid,
+      cashReceiptType: this.type,
+    };
+  }
 }
 
 export class PayletterPaymentsReturnSuccessResponseDto {
@@ -33,22 +45,22 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   cid: string;
 
   @ApiProperty({ description: '결제금액' })
-  amount: string;
+  amount: number;
 
   @ApiProperty({ description: '비과세 금액' })
-  taxfree_amount: string;
+  taxfree_amount: number;
 
   @ApiProperty({ description: '부가세 금액' })
-  tax_amount: string;
+  tax_amount: number;
 
   @ApiProperty({ description: '결제 해시값' })
   payhash: string;
 
   @ApiProperty({ description: '할인 금액' })
-  discount_amount: string;
+  discount_amount: number;
 
   @ApiProperty({ description: '일회용 컵 보증금' })
-  disposable_cup_deposit: string;
+  disposable_cup_deposit: number;
 
   @ApiProperty({ description: '결제자 아이디' })
   user_id: string;
@@ -104,6 +116,35 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   @ApiPropertyOptional({ description: '포인트 사용 여부' })
   @IsOptional()
   pointuse_flag?: string;
+
+  toCamelCase() {
+    return {
+      tid: this.tid,
+      cid: this.cid,
+      amount: this.amount,
+      taxfreeAmount: this.taxfree_amount,
+      taxAmount: this.tax_amount,
+      payhash: this.payhash,
+      discountAmount: this.discount_amount,
+      disposableCupDeposit: this.disposable_cup_deposit,
+      userId: this.user_id,
+      pgcode: this.pgcode,
+      serviceName: this.service_name,
+      productName: this.product_name,
+      transactionDate: this.transaction_date,
+      code: this.code,
+      message: this.message,
+      userName: this.user_name,
+      billkey: this.billkey,
+      cardCode: this.card_code,
+      cardInfo: this.card_info,
+      domesticFlag: this.domestic_flag,
+      installMonth: this.install_month,
+      orderNo: this.order_no,
+      payInfo: this.pay_info,
+      pointuseFlag: this.pointuse_flag,
+    };
+  }
 }
 
 export class PayletterPaymentsReturnFailureResponseDto {
@@ -127,6 +168,17 @@ export class PayletterPaymentsReturnFailureResponseDto {
   @ApiPropertyOptional({ description: '가맹점이 전송한 임의의 값' })
   @IsOptional()
   custom_parameter?: string;
+
+  toCamelCase() {
+    return {
+      success: this.success,
+      errorCode: this.error_code,
+      errorMsg: this.error_msg,
+      orderNo: this.order_no,
+      pgcode: this.pgcode,
+      customParameter: this.custom_parameter,
+    };
+  }
 }
 
 export class PayletterPaymentsCallbackSuccessResponseDto extends PayletterPaymentsReturnSuccessResponseDto {
@@ -134,7 +186,7 @@ export class PayletterPaymentsCallbackSuccessResponseDto extends PayletterPaymen
   method_info: string;
 
   @ApiProperty({ description: '쿠폰 사용 금액' })
-  coupon_amount: string;
+  coupon_amount: number;
 
   @ApiProperty({
     description:
@@ -177,4 +229,24 @@ export class PayletterPaymentsCallbackSuccessResponseDto extends PayletterPaymen
   @ApiPropertyOptional({ description: '가상계좌 만료시각 (ex: 1130)' })
   @IsOptional()
   expire_time: string;
+
+  toCamelCase() {
+    const base = super.toCamelCase();
+    return {
+      ...base,
+      methodInfo: this.method_info,
+      couponAmount: this.coupon_amount,
+      receiptPossibleAmount: this.receipt_possible_amount,
+      accountNo: this.account_no,
+      accountName: this.account_name,
+      accountHolder: this.account_holder,
+      bankCode: this.bank_code,
+      bankName: this.bank_name,
+      issueTid: this.issue_tid,
+      expireDate: this.expire_date,
+      expireTime: this.expire_time,
+
+      ...this.cash_receipt?.toCamelCase(),
+    };
+  }
 }

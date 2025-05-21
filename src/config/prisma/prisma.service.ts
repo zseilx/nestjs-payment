@@ -1,5 +1,13 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { Prisma, PrismaClient } from 'generated/prisma';
+import { InfinityScrollOptions, InfinityScrollResult } from './infinity-scroll';
+import { PaginatedResult, PaginationOptions } from './pagination';
+
+type PrismaModel = {
+  findMany: (args: any) => Promise<Array<{ id: string }>>;
+  count: (args: any) => Promise<number>;
+};
 
 @Injectable()
 export class PrismaService
@@ -33,80 +41,76 @@ export class PrismaService
     await this.$disconnect();
   }
 
-  // async fetchPaginatedResult<T, S>(
-  //   Ctor: new (...args: any[]) => T,
-  //   model: Prisma.ModelName,
-  //   { page = 1, take = 10, order = 'desc' }: PaginationOptions,
-  //   search?: S,
-  // ): Promise<PaginatedResult<T>> {
-  //   const skip = (page - 1) * take;
+  async fetchPaginatedResult<T, S>(
+    Ctor: new (...args: any[]) => T,
+    model: Prisma.ModelName,
+    { page = 1, take = 10, order = 'desc' }: PaginationOptions,
+    search?: S,
+  ): Promise<PaginatedResult<T>> {
+    const skip = (page - 1) * take;
 
-  //   // 모델을 동적으로 참조
-  //   const modelRef = this[model];
+    // 모델을 동적으로 참조
+    const modelRef = this[model] as PrismaModel;
 
-  //   const [results, totalRow] = await Promise.all([
-  //     modelRef.findMany({
-  //       skip,
-  //       take,
-  //       where: search,
-  //       orderBy: {
-  //         id: order,
-  //       },
-  //     }),
-  //     modelRef.count({
-  //       where: search,
-  //     }),
-  //   ]);
+    const [results, totalRow] = await Promise.all([
+      modelRef.findMany({
+        skip,
+        take,
+        where: search,
+        orderBy: {
+          id: order,
+        },
+      }),
+      modelRef.count({
+        where: search,
+      }),
+    ]);
 
-  //   return {
-  //     // data: results.map((result) => new T(result)),
-  //     data: results.map((result) => plainToInstance(Ctor, result)),
+    return {
+      list: results.map((result) => plainToInstance(Ctor, result)),
+      paging: {
+        currentPage: page,
+        take: take,
+        totalRow,
+      },
+    };
+  }
 
-  //     paging: {
-  //       currentPage: page,
-  //       take: take,
-  //       totalRow,
-  //     },
-  //   };
-  // }
+  async fetchInfinityResult<T, S>(
+    Ctor: new (...args: any[]) => T,
+    model: Prisma.ModelName,
+    { take = 10, order = 'desc', cursor }: InfinityScrollOptions,
+    prisma: PrismaClient,
+    search?: S,
+  ): Promise<InfinityScrollResult<T>> {
+    // 모델을 동적으로 참조
+    const modelRef = prisma[model] as PrismaModel;
 
-  // async fetchInfinityResult<T, S>(
-  //   Ctor: new (...args: any[]) => T,
-  //   model: Prisma.ModelName,
-  //   { take = 10, order = 'desc', cursor }: InfinityScrollOptions,
-  //   prisma: PrismaClient,
-  //   search?: S,
-  // ): Promise<InfinityScrollResult<T>> {
-  //   // 모델을 동적으로 참조
-  //   const modelRef = prisma[model];
+    const [results, totalRow] = await Promise.all([
+      modelRef.findMany({
+        cursor: cursor
+          ? {
+              id: cursor,
+            }
+          : undefined,
+        take,
+        where: search,
+        orderBy: {
+          id: order,
+        },
+      }),
+      modelRef.count({
+        where: search,
+      }),
+    ]);
 
-  //   const [results, totalRow] = await Promise.all([
-  //     modelRef.findMany({
-  //       cursor: cursor
-  //         ? {
-  //             id: cursor,
-  //           }
-  //         : undefined,
-  //       take,
-  //       where: search,
-  //       orderBy: {
-  //         id: order,
-  //       },
-  //     }),
-  //     modelRef.count({
-  //       where: search,
-  //     }),
-  //   ]);
-
-  //   return {
-  //     // data: results.map((result) => new T(result)),
-  //     data: results.map((result) => new Ctor(result)),
-
-  //     paging: {
-  //       cursor: results.pop()?.id ?? null,
-  //       take: take,
-  //       totalRow,
-  //     },
-  //   };
-  // }
+    return {
+      list: results.map((result) => plainToInstance(Ctor, result)),
+      paging: {
+        cursor: results[results.length - 1]?.id ?? null,
+        take: take,
+        totalRow,
+      },
+    };
+  }
 }

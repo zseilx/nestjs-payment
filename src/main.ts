@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Express, Request, Response } from 'express';
 import { AppModule } from './app.module';
-import { PaginatedResult } from './config/prisma/pagination';
+import { PaginatedResult, PagingInfo } from './config/prisma/pagination';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,7 +32,7 @@ async function bootstrap() {
     )
     .build();
   const documentFactory = SwaggerModule.createDocument(app, config, {
-    extraModels: [PaginatedResult],
+    extraModels: [PaginatedResult, PagingInfo],
     deepScanRoutes: true,
   });
   documentFactory.security = [{ 'access-token': [] }];

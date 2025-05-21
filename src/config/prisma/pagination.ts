@@ -1,16 +1,34 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 
-export interface PaginationOptions {
-  page?: number; // 현재 페이지 번호
-  take?: number; // 한 페이지에 가져올 데이터 수
-  order?: 'asc' | 'desc'; // 정렬 방식
+export class PaginationOptions {
+  @ApiPropertyOptional({ description: '페이지 번호' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
+
+  @ApiPropertyOptional({
+    description: '한 페이지에 가져올 데이터 수',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  take: number = 10;
+
+  @ApiPropertyOptional({ description: '정렬 방식' })
+  @IsOptional()
+  @IsEnum(['asc', 'desc'])
+  order: 'asc' | 'desc' = 'desc';
 }
 
 export class PagingInfo {
-  @ApiPropertyOptional({ description: '전체 데이터 수' })
-  @IsOptional()
-  totalRow?: number;
+  @ApiProperty({ description: '전체 데이터 수' })
+  totalRow: number;
 
   @ApiProperty({ description: '현재 페이지', example: 1 })
   currentPage: number;
@@ -21,7 +39,7 @@ export class PagingInfo {
 
 export class PaginatedResult<T> {
   @ApiProperty({ description: '결과 데이터 리스트', isArray: true })
-  data: T[];
+  list: T[];
 
   @ApiProperty({ description: '페이징 정보', type: PagingInfo })
   paging: PagingInfo;
