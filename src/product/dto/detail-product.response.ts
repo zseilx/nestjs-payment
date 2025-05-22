@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { ProductType } from 'generated/prisma';
 
 export class DetailProductResponse {
@@ -25,6 +26,7 @@ export class DetailProductResponse {
     description: '상품 가격 (원 단위, VAT 포함)',
     example: 10000,
   })
+  @Type(() => Number)
   price: number;
 
   @ApiProperty({

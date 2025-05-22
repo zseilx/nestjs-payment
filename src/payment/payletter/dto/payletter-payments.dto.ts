@@ -207,6 +207,7 @@ export class PayletterPaymentsApiRequest extends PayletterPaymentsRequest {
       // returnUrl: this.return_url, // Prisma에서 기록 안하기에 필요 없음
       // callbackUrl: this.callback_url, // Prisma에서 기록 안하기에 필요 없음
       // cancelUrl: this.cancel_url, // Prisma에서 기록 안하기에 필요 없음
+      // userId: this.user_id,
       appReturnUrl: this.app_return_url,
       expireDate: this.expire_date,
       expireTime: this.expire_time,
@@ -215,7 +216,6 @@ export class PayletterPaymentsApiRequest extends PayletterPaymentsRequest {
       failureRedirectUrl: this.failureRedirectUrl,
       pgcode: this.pgcode,
       serviceName: this.service_name,
-      userId: this.user_id,
       userName: this.user_name,
       orderNo: this.order_no,
       amount: this.amount,
@@ -227,7 +227,7 @@ export class PayletterPaymentsApiRequest extends PayletterPaymentsRequest {
       autopayFlag: this.autopay_flag,
       receiptFlag: this.receipt_flag,
       keyinFlag: this.keyin_flag,
-      customParameter: this.custom_parameter,
+      // customParameter: this.custom_parameter,
       inappFlag: this.inapp_flag,
       appCancelUrl: this.app_cancel_url,
       disposableCupDeposit: this.disposable_cup_deposit,

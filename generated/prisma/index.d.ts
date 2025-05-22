@@ -5203,6 +5203,9 @@ export namespace Prisma {
     serviceName: string | null
     status: $Enums.PaymentStatus | null
     paidAt: Date | null
+    successRedirectUrl: string | null
+    failureRedirectUrl: string | null
+    cancelRedirectUrl: string | null
     createdAt: Date | null
   }
 
@@ -5214,6 +5217,9 @@ export namespace Prisma {
     serviceName: string | null
     status: $Enums.PaymentStatus | null
     paidAt: Date | null
+    successRedirectUrl: string | null
+    failureRedirectUrl: string | null
+    cancelRedirectUrl: string | null
     createdAt: Date | null
   }
 
@@ -5225,6 +5231,9 @@ export namespace Prisma {
     serviceName: number
     status: number
     paidAt: number
+    successRedirectUrl: number
+    failureRedirectUrl: number
+    cancelRedirectUrl: number
     createdAt: number
     _all: number
   }
@@ -5246,6 +5255,9 @@ export namespace Prisma {
     serviceName?: true
     status?: true
     paidAt?: true
+    successRedirectUrl?: true
+    failureRedirectUrl?: true
+    cancelRedirectUrl?: true
     createdAt?: true
   }
 
@@ -5257,6 +5269,9 @@ export namespace Prisma {
     serviceName?: true
     status?: true
     paidAt?: true
+    successRedirectUrl?: true
+    failureRedirectUrl?: true
+    cancelRedirectUrl?: true
     createdAt?: true
   }
 
@@ -5268,6 +5283,9 @@ export namespace Prisma {
     serviceName?: true
     status?: true
     paidAt?: true
+    successRedirectUrl?: true
+    failureRedirectUrl?: true
+    cancelRedirectUrl?: true
     createdAt?: true
     _all?: true
   }
@@ -5366,6 +5384,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt: Date | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt: Date
     _count: PaymentCountAggregateOutputType | null
     _avg: PaymentAvgAggregateOutputType | null
@@ -5396,6 +5417,9 @@ export namespace Prisma {
     serviceName?: boolean
     status?: boolean
     paidAt?: boolean
+    successRedirectUrl?: boolean
+    failureRedirectUrl?: boolean
+    cancelRedirectUrl?: boolean
     createdAt?: boolean
     orders?: boolean | Payment$ordersArgs<ExtArgs>
     refunds?: boolean | Payment$refundsArgs<ExtArgs>
@@ -5411,6 +5435,9 @@ export namespace Prisma {
     serviceName?: boolean
     status?: boolean
     paidAt?: boolean
+    successRedirectUrl?: boolean
+    failureRedirectUrl?: boolean
+    cancelRedirectUrl?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["payment"]>
 
@@ -5422,6 +5449,9 @@ export namespace Prisma {
     serviceName?: boolean
     status?: boolean
     paidAt?: boolean
+    successRedirectUrl?: boolean
+    failureRedirectUrl?: boolean
+    cancelRedirectUrl?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["payment"]>
 
@@ -5433,10 +5463,13 @@ export namespace Prisma {
     serviceName?: boolean
     status?: boolean
     paidAt?: boolean
+    successRedirectUrl?: boolean
+    failureRedirectUrl?: boolean
+    cancelRedirectUrl?: boolean
     createdAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "pgProvider" | "method" | "serviceName" | "status" | "paidAt" | "createdAt", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "pgProvider" | "method" | "serviceName" | "status" | "paidAt" | "successRedirectUrl" | "failureRedirectUrl" | "cancelRedirectUrl" | "createdAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | Payment$ordersArgs<ExtArgs>
     refunds?: boolean | Payment$refundsArgs<ExtArgs>
@@ -5461,6 +5494,9 @@ export namespace Prisma {
       serviceName: string
       status: $Enums.PaymentStatus
       paidAt: Date | null
+      successRedirectUrl: string
+      failureRedirectUrl: string
+      cancelRedirectUrl: string
       createdAt: Date
     }, ExtArgs["result"]["payment"]>
     composites: {}
@@ -5895,6 +5931,9 @@ export namespace Prisma {
     readonly serviceName: FieldRef<"Payment", 'String'>
     readonly status: FieldRef<"Payment", 'PaymentStatus'>
     readonly paidAt: FieldRef<"Payment", 'DateTime'>
+    readonly successRedirectUrl: FieldRef<"Payment", 'String'>
+    readonly failureRedirectUrl: FieldRef<"Payment", 'String'>
+    readonly cancelRedirectUrl: FieldRef<"Payment", 'String'>
     readonly createdAt: FieldRef<"Payment", 'DateTime'>
   }
     
@@ -6382,26 +6421,32 @@ export namespace Prisma {
   }
 
   export type PayletterDetailAvgAggregateOutputType = {
-    disposableCupDeposit: number | null
-    taxAmount: number | null
-    taxfreeAmount: number | null
-    nonsettleAmount: number | null
-    couponAmount: number | null
-    receiptPossibleAmount: number | null
+    disposableCupDeposit: Decimal | null
+    amount: Decimal | null
+    taxAmount: Decimal | null
+    taxfreeAmount: Decimal | null
+    nonsettleAmount: Decimal | null
+    couponAmount: Decimal | null
+    receiptPossibleAmount: Decimal | null
+    installMonth: number | null
   }
 
   export type PayletterDetailSumAggregateOutputType = {
-    disposableCupDeposit: number | null
-    taxAmount: number | null
-    taxfreeAmount: number | null
-    nonsettleAmount: number | null
-    couponAmount: number | null
-    receiptPossibleAmount: number | null
+    disposableCupDeposit: Decimal | null
+    amount: Decimal | null
+    taxAmount: Decimal | null
+    taxfreeAmount: Decimal | null
+    nonsettleAmount: Decimal | null
+    couponAmount: Decimal | null
+    receiptPossibleAmount: Decimal | null
+    installMonth: number | null
   }
 
   export type PayletterDetailMinAggregateOutputType = {
     id: string | null
     paymentId: string | null
+    userId: string | null
+    userName: string | null
     onlineUrl: string | null
     mobileUrl: string | null
     code: string | null
@@ -6418,12 +6463,14 @@ export namespace Prisma {
     domesticFlag: string | null
     billkey: string | null
     cardInfo: string | null
-    disposableCupDeposit: number | null
-    taxAmount: number | null
-    taxfreeAmount: number | null
-    nonsettleAmount: number | null
-    couponAmount: number | null
-    receiptPossibleAmount: number | null
+    disposableCupDeposit: Decimal | null
+    amount: Decimal | null
+    taxAmount: Decimal | null
+    taxfreeAmount: Decimal | null
+    nonsettleAmount: Decimal | null
+    couponAmount: Decimal | null
+    receiptPossibleAmount: Decimal | null
+    installMonth: number | null
     cashReceiptCid: string | null
     cashReceiptCode: string | null
     cashReceiptDealNo: string | null
@@ -6431,20 +6478,22 @@ export namespace Prisma {
     cashReceiptMessage: string | null
     cashReceiptPayerSid: string | null
     cashReceiptType: string | null
-    account_no: string | null
-    account_name: string | null
-    account_holder: string | null
-    bank_code: string | null
-    bank_name: string | null
-    issue_tid: string | null
-    expire_date: string | null
-    expire_time: string | null
+    accountNo: string | null
+    accountName: string | null
+    accountHolder: string | null
+    bankCode: string | null
+    bankName: string | null
+    issueTid: string | null
+    expireDate: string | null
+    expireTime: string | null
     transactionDate: Date | null
   }
 
   export type PayletterDetailMaxAggregateOutputType = {
     id: string | null
     paymentId: string | null
+    userId: string | null
+    userName: string | null
     onlineUrl: string | null
     mobileUrl: string | null
     code: string | null
@@ -6461,12 +6510,14 @@ export namespace Prisma {
     domesticFlag: string | null
     billkey: string | null
     cardInfo: string | null
-    disposableCupDeposit: number | null
-    taxAmount: number | null
-    taxfreeAmount: number | null
-    nonsettleAmount: number | null
-    couponAmount: number | null
-    receiptPossibleAmount: number | null
+    disposableCupDeposit: Decimal | null
+    amount: Decimal | null
+    taxAmount: Decimal | null
+    taxfreeAmount: Decimal | null
+    nonsettleAmount: Decimal | null
+    couponAmount: Decimal | null
+    receiptPossibleAmount: Decimal | null
+    installMonth: number | null
     cashReceiptCid: string | null
     cashReceiptCode: string | null
     cashReceiptDealNo: string | null
@@ -6474,20 +6525,22 @@ export namespace Prisma {
     cashReceiptMessage: string | null
     cashReceiptPayerSid: string | null
     cashReceiptType: string | null
-    account_no: string | null
-    account_name: string | null
-    account_holder: string | null
-    bank_code: string | null
-    bank_name: string | null
-    issue_tid: string | null
-    expire_date: string | null
-    expire_time: string | null
+    accountNo: string | null
+    accountName: string | null
+    accountHolder: string | null
+    bankCode: string | null
+    bankName: string | null
+    issueTid: string | null
+    expireDate: string | null
+    expireTime: string | null
     transactionDate: Date | null
   }
 
   export type PayletterDetailCountAggregateOutputType = {
     id: number
     paymentId: number
+    userId: number
+    userName: number
     onlineUrl: number
     mobileUrl: number
     code: number
@@ -6505,11 +6558,13 @@ export namespace Prisma {
     billkey: number
     cardInfo: number
     disposableCupDeposit: number
+    amount: number
     taxAmount: number
     taxfreeAmount: number
     nonsettleAmount: number
     couponAmount: number
     receiptPossibleAmount: number
+    installMonth: number
     cashReceiptCid: number
     cashReceiptCode: number
     cashReceiptDealNo: number
@@ -6517,14 +6572,14 @@ export namespace Prisma {
     cashReceiptMessage: number
     cashReceiptPayerSid: number
     cashReceiptType: number
-    account_no: number
-    account_name: number
-    account_holder: number
-    bank_code: number
-    bank_name: number
-    issue_tid: number
-    expire_date: number
-    expire_time: number
+    accountNo: number
+    accountName: number
+    accountHolder: number
+    bankCode: number
+    bankName: number
+    issueTid: number
+    expireDate: number
+    expireTime: number
     transactionDate: number
     _all: number
   }
@@ -6532,25 +6587,31 @@ export namespace Prisma {
 
   export type PayletterDetailAvgAggregateInputType = {
     disposableCupDeposit?: true
+    amount?: true
     taxAmount?: true
     taxfreeAmount?: true
     nonsettleAmount?: true
     couponAmount?: true
     receiptPossibleAmount?: true
+    installMonth?: true
   }
 
   export type PayletterDetailSumAggregateInputType = {
     disposableCupDeposit?: true
+    amount?: true
     taxAmount?: true
     taxfreeAmount?: true
     nonsettleAmount?: true
     couponAmount?: true
     receiptPossibleAmount?: true
+    installMonth?: true
   }
 
   export type PayletterDetailMinAggregateInputType = {
     id?: true
     paymentId?: true
+    userId?: true
+    userName?: true
     onlineUrl?: true
     mobileUrl?: true
     code?: true
@@ -6568,11 +6629,13 @@ export namespace Prisma {
     billkey?: true
     cardInfo?: true
     disposableCupDeposit?: true
+    amount?: true
     taxAmount?: true
     taxfreeAmount?: true
     nonsettleAmount?: true
     couponAmount?: true
     receiptPossibleAmount?: true
+    installMonth?: true
     cashReceiptCid?: true
     cashReceiptCode?: true
     cashReceiptDealNo?: true
@@ -6580,20 +6643,22 @@ export namespace Prisma {
     cashReceiptMessage?: true
     cashReceiptPayerSid?: true
     cashReceiptType?: true
-    account_no?: true
-    account_name?: true
-    account_holder?: true
-    bank_code?: true
-    bank_name?: true
-    issue_tid?: true
-    expire_date?: true
-    expire_time?: true
+    accountNo?: true
+    accountName?: true
+    accountHolder?: true
+    bankCode?: true
+    bankName?: true
+    issueTid?: true
+    expireDate?: true
+    expireTime?: true
     transactionDate?: true
   }
 
   export type PayletterDetailMaxAggregateInputType = {
     id?: true
     paymentId?: true
+    userId?: true
+    userName?: true
     onlineUrl?: true
     mobileUrl?: true
     code?: true
@@ -6611,11 +6676,13 @@ export namespace Prisma {
     billkey?: true
     cardInfo?: true
     disposableCupDeposit?: true
+    amount?: true
     taxAmount?: true
     taxfreeAmount?: true
     nonsettleAmount?: true
     couponAmount?: true
     receiptPossibleAmount?: true
+    installMonth?: true
     cashReceiptCid?: true
     cashReceiptCode?: true
     cashReceiptDealNo?: true
@@ -6623,20 +6690,22 @@ export namespace Prisma {
     cashReceiptMessage?: true
     cashReceiptPayerSid?: true
     cashReceiptType?: true
-    account_no?: true
-    account_name?: true
-    account_holder?: true
-    bank_code?: true
-    bank_name?: true
-    issue_tid?: true
-    expire_date?: true
-    expire_time?: true
+    accountNo?: true
+    accountName?: true
+    accountHolder?: true
+    bankCode?: true
+    bankName?: true
+    issueTid?: true
+    expireDate?: true
+    expireTime?: true
     transactionDate?: true
   }
 
   export type PayletterDetailCountAggregateInputType = {
     id?: true
     paymentId?: true
+    userId?: true
+    userName?: true
     onlineUrl?: true
     mobileUrl?: true
     code?: true
@@ -6654,11 +6723,13 @@ export namespace Prisma {
     billkey?: true
     cardInfo?: true
     disposableCupDeposit?: true
+    amount?: true
     taxAmount?: true
     taxfreeAmount?: true
     nonsettleAmount?: true
     couponAmount?: true
     receiptPossibleAmount?: true
+    installMonth?: true
     cashReceiptCid?: true
     cashReceiptCode?: true
     cashReceiptDealNo?: true
@@ -6666,14 +6737,14 @@ export namespace Prisma {
     cashReceiptMessage?: true
     cashReceiptPayerSid?: true
     cashReceiptType?: true
-    account_no?: true
-    account_name?: true
-    account_holder?: true
-    bank_code?: true
-    bank_name?: true
-    issue_tid?: true
-    expire_date?: true
-    expire_time?: true
+    accountNo?: true
+    accountName?: true
+    accountHolder?: true
+    bankCode?: true
+    bankName?: true
+    issueTid?: true
+    expireDate?: true
+    expireTime?: true
     transactionDate?: true
     _all?: true
   }
@@ -6767,6 +6838,8 @@ export namespace Prisma {
   export type PayletterDetailGroupByOutputType = {
     id: string
     paymentId: string
+    userId: string | null
+    userName: string | null
     onlineUrl: string | null
     mobileUrl: string | null
     code: string | null
@@ -6783,12 +6856,14 @@ export namespace Prisma {
     domesticFlag: string | null
     billkey: string | null
     cardInfo: string | null
-    disposableCupDeposit: number | null
-    taxAmount: number | null
-    taxfreeAmount: number | null
-    nonsettleAmount: number | null
-    couponAmount: number | null
-    receiptPossibleAmount: number | null
+    disposableCupDeposit: Decimal | null
+    amount: Decimal | null
+    taxAmount: Decimal | null
+    taxfreeAmount: Decimal | null
+    nonsettleAmount: Decimal | null
+    couponAmount: Decimal | null
+    receiptPossibleAmount: Decimal | null
+    installMonth: number | null
     cashReceiptCid: string | null
     cashReceiptCode: string | null
     cashReceiptDealNo: string | null
@@ -6796,14 +6871,14 @@ export namespace Prisma {
     cashReceiptMessage: string | null
     cashReceiptPayerSid: string | null
     cashReceiptType: string | null
-    account_no: string | null
-    account_name: string | null
-    account_holder: string | null
-    bank_code: string | null
-    bank_name: string | null
-    issue_tid: string | null
-    expire_date: string | null
-    expire_time: string | null
+    accountNo: string | null
+    accountName: string | null
+    accountHolder: string | null
+    bankCode: string | null
+    bankName: string | null
+    issueTid: string | null
+    expireDate: string | null
+    expireTime: string | null
     transactionDate: Date | null
     _count: PayletterDetailCountAggregateOutputType | null
     _avg: PayletterDetailAvgAggregateOutputType | null
@@ -6829,6 +6904,8 @@ export namespace Prisma {
   export type PayletterDetailSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    userId?: boolean
+    userName?: boolean
     onlineUrl?: boolean
     mobileUrl?: boolean
     code?: boolean
@@ -6846,11 +6923,13 @@ export namespace Prisma {
     billkey?: boolean
     cardInfo?: boolean
     disposableCupDeposit?: boolean
+    amount?: boolean
     taxAmount?: boolean
     taxfreeAmount?: boolean
     nonsettleAmount?: boolean
     couponAmount?: boolean
     receiptPossibleAmount?: boolean
+    installMonth?: boolean
     cashReceiptCid?: boolean
     cashReceiptCode?: boolean
     cashReceiptDealNo?: boolean
@@ -6858,14 +6937,14 @@ export namespace Prisma {
     cashReceiptMessage?: boolean
     cashReceiptPayerSid?: boolean
     cashReceiptType?: boolean
-    account_no?: boolean
-    account_name?: boolean
-    account_holder?: boolean
-    bank_code?: boolean
-    bank_name?: boolean
-    issue_tid?: boolean
-    expire_date?: boolean
-    expire_time?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    accountHolder?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    issueTid?: boolean
+    expireDate?: boolean
+    expireTime?: boolean
     transactionDate?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payletterDetail"]>
@@ -6873,6 +6952,8 @@ export namespace Prisma {
   export type PayletterDetailSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    userId?: boolean
+    userName?: boolean
     onlineUrl?: boolean
     mobileUrl?: boolean
     code?: boolean
@@ -6890,11 +6971,13 @@ export namespace Prisma {
     billkey?: boolean
     cardInfo?: boolean
     disposableCupDeposit?: boolean
+    amount?: boolean
     taxAmount?: boolean
     taxfreeAmount?: boolean
     nonsettleAmount?: boolean
     couponAmount?: boolean
     receiptPossibleAmount?: boolean
+    installMonth?: boolean
     cashReceiptCid?: boolean
     cashReceiptCode?: boolean
     cashReceiptDealNo?: boolean
@@ -6902,14 +6985,14 @@ export namespace Prisma {
     cashReceiptMessage?: boolean
     cashReceiptPayerSid?: boolean
     cashReceiptType?: boolean
-    account_no?: boolean
-    account_name?: boolean
-    account_holder?: boolean
-    bank_code?: boolean
-    bank_name?: boolean
-    issue_tid?: boolean
-    expire_date?: boolean
-    expire_time?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    accountHolder?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    issueTid?: boolean
+    expireDate?: boolean
+    expireTime?: boolean
     transactionDate?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payletterDetail"]>
@@ -6917,6 +7000,8 @@ export namespace Prisma {
   export type PayletterDetailSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     paymentId?: boolean
+    userId?: boolean
+    userName?: boolean
     onlineUrl?: boolean
     mobileUrl?: boolean
     code?: boolean
@@ -6934,11 +7019,13 @@ export namespace Prisma {
     billkey?: boolean
     cardInfo?: boolean
     disposableCupDeposit?: boolean
+    amount?: boolean
     taxAmount?: boolean
     taxfreeAmount?: boolean
     nonsettleAmount?: boolean
     couponAmount?: boolean
     receiptPossibleAmount?: boolean
+    installMonth?: boolean
     cashReceiptCid?: boolean
     cashReceiptCode?: boolean
     cashReceiptDealNo?: boolean
@@ -6946,14 +7033,14 @@ export namespace Prisma {
     cashReceiptMessage?: boolean
     cashReceiptPayerSid?: boolean
     cashReceiptType?: boolean
-    account_no?: boolean
-    account_name?: boolean
-    account_holder?: boolean
-    bank_code?: boolean
-    bank_name?: boolean
-    issue_tid?: boolean
-    expire_date?: boolean
-    expire_time?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    accountHolder?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    issueTid?: boolean
+    expireDate?: boolean
+    expireTime?: boolean
     transactionDate?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payletterDetail"]>
@@ -6961,6 +7048,8 @@ export namespace Prisma {
   export type PayletterDetailSelectScalar = {
     id?: boolean
     paymentId?: boolean
+    userId?: boolean
+    userName?: boolean
     onlineUrl?: boolean
     mobileUrl?: boolean
     code?: boolean
@@ -6978,11 +7067,13 @@ export namespace Prisma {
     billkey?: boolean
     cardInfo?: boolean
     disposableCupDeposit?: boolean
+    amount?: boolean
     taxAmount?: boolean
     taxfreeAmount?: boolean
     nonsettleAmount?: boolean
     couponAmount?: boolean
     receiptPossibleAmount?: boolean
+    installMonth?: boolean
     cashReceiptCid?: boolean
     cashReceiptCode?: boolean
     cashReceiptDealNo?: boolean
@@ -6990,18 +7081,18 @@ export namespace Prisma {
     cashReceiptMessage?: boolean
     cashReceiptPayerSid?: boolean
     cashReceiptType?: boolean
-    account_no?: boolean
-    account_name?: boolean
-    account_holder?: boolean
-    bank_code?: boolean
-    bank_name?: boolean
-    issue_tid?: boolean
-    expire_date?: boolean
-    expire_time?: boolean
+    accountNo?: boolean
+    accountName?: boolean
+    accountHolder?: boolean
+    bankCode?: boolean
+    bankName?: boolean
+    issueTid?: boolean
+    expireDate?: boolean
+    expireTime?: boolean
     transactionDate?: boolean
   }
 
-  export type PayletterDetailOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentId" | "onlineUrl" | "mobileUrl" | "code" | "message" | "tid" | "cid" | "orderNo" | "pgcode" | "serviceName" | "productName" | "payhash" | "payInfo" | "methodInfo" | "domesticFlag" | "billkey" | "cardInfo" | "disposableCupDeposit" | "taxAmount" | "taxfreeAmount" | "nonsettleAmount" | "couponAmount" | "receiptPossibleAmount" | "cashReceiptCid" | "cashReceiptCode" | "cashReceiptDealNo" | "cashReceiptIssueType" | "cashReceiptMessage" | "cashReceiptPayerSid" | "cashReceiptType" | "account_no" | "account_name" | "account_holder" | "bank_code" | "bank_name" | "issue_tid" | "expire_date" | "expire_time" | "transactionDate", ExtArgs["result"]["payletterDetail"]>
+  export type PayletterDetailOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "paymentId" | "userId" | "userName" | "onlineUrl" | "mobileUrl" | "code" | "message" | "tid" | "cid" | "orderNo" | "pgcode" | "serviceName" | "productName" | "payhash" | "payInfo" | "methodInfo" | "domesticFlag" | "billkey" | "cardInfo" | "disposableCupDeposit" | "amount" | "taxAmount" | "taxfreeAmount" | "nonsettleAmount" | "couponAmount" | "receiptPossibleAmount" | "installMonth" | "cashReceiptCid" | "cashReceiptCode" | "cashReceiptDealNo" | "cashReceiptIssueType" | "cashReceiptMessage" | "cashReceiptPayerSid" | "cashReceiptType" | "accountNo" | "accountName" | "accountHolder" | "bankCode" | "bankName" | "issueTid" | "expireDate" | "expireTime" | "transactionDate", ExtArgs["result"]["payletterDetail"]>
   export type PayletterDetailInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }
@@ -7020,6 +7111,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       paymentId: string
+      userId: string | null
+      userName: string | null
       onlineUrl: string | null
       mobileUrl: string | null
       code: string | null
@@ -7036,12 +7129,14 @@ export namespace Prisma {
       domesticFlag: string | null
       billkey: string | null
       cardInfo: string | null
-      disposableCupDeposit: number | null
-      taxAmount: number | null
-      taxfreeAmount: number | null
-      nonsettleAmount: number | null
-      couponAmount: number | null
-      receiptPossibleAmount: number | null
+      disposableCupDeposit: Prisma.Decimal | null
+      amount: Prisma.Decimal | null
+      taxAmount: Prisma.Decimal | null
+      taxfreeAmount: Prisma.Decimal | null
+      nonsettleAmount: Prisma.Decimal | null
+      couponAmount: Prisma.Decimal | null
+      receiptPossibleAmount: Prisma.Decimal | null
+      installMonth: number | null
       cashReceiptCid: string | null
       cashReceiptCode: string | null
       cashReceiptDealNo: string | null
@@ -7049,14 +7144,14 @@ export namespace Prisma {
       cashReceiptMessage: string | null
       cashReceiptPayerSid: string | null
       cashReceiptType: string | null
-      account_no: string | null
-      account_name: string | null
-      account_holder: string | null
-      bank_code: string | null
-      bank_name: string | null
-      issue_tid: string | null
-      expire_date: string | null
-      expire_time: string | null
+      accountNo: string | null
+      accountName: string | null
+      accountHolder: string | null
+      bankCode: string | null
+      bankName: string | null
+      issueTid: string | null
+      expireDate: string | null
+      expireTime: string | null
       transactionDate: Date | null
     }, ExtArgs["result"]["payletterDetail"]>
     composites: {}
@@ -7484,6 +7579,8 @@ export namespace Prisma {
   interface PayletterDetailFieldRefs {
     readonly id: FieldRef<"PayletterDetail", 'String'>
     readonly paymentId: FieldRef<"PayletterDetail", 'String'>
+    readonly userId: FieldRef<"PayletterDetail", 'String'>
+    readonly userName: FieldRef<"PayletterDetail", 'String'>
     readonly onlineUrl: FieldRef<"PayletterDetail", 'String'>
     readonly mobileUrl: FieldRef<"PayletterDetail", 'String'>
     readonly code: FieldRef<"PayletterDetail", 'String'>
@@ -7500,12 +7597,14 @@ export namespace Prisma {
     readonly domesticFlag: FieldRef<"PayletterDetail", 'String'>
     readonly billkey: FieldRef<"PayletterDetail", 'String'>
     readonly cardInfo: FieldRef<"PayletterDetail", 'String'>
-    readonly disposableCupDeposit: FieldRef<"PayletterDetail", 'Int'>
-    readonly taxAmount: FieldRef<"PayletterDetail", 'Int'>
-    readonly taxfreeAmount: FieldRef<"PayletterDetail", 'Int'>
-    readonly nonsettleAmount: FieldRef<"PayletterDetail", 'Int'>
-    readonly couponAmount: FieldRef<"PayletterDetail", 'Int'>
-    readonly receiptPossibleAmount: FieldRef<"PayletterDetail", 'Int'>
+    readonly disposableCupDeposit: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly amount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly taxAmount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly taxfreeAmount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly nonsettleAmount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly couponAmount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly receiptPossibleAmount: FieldRef<"PayletterDetail", 'Decimal'>
+    readonly installMonth: FieldRef<"PayletterDetail", 'Int'>
     readonly cashReceiptCid: FieldRef<"PayletterDetail", 'String'>
     readonly cashReceiptCode: FieldRef<"PayletterDetail", 'String'>
     readonly cashReceiptDealNo: FieldRef<"PayletterDetail", 'String'>
@@ -7513,14 +7612,14 @@ export namespace Prisma {
     readonly cashReceiptMessage: FieldRef<"PayletterDetail", 'String'>
     readonly cashReceiptPayerSid: FieldRef<"PayletterDetail", 'String'>
     readonly cashReceiptType: FieldRef<"PayletterDetail", 'String'>
-    readonly account_no: FieldRef<"PayletterDetail", 'String'>
-    readonly account_name: FieldRef<"PayletterDetail", 'String'>
-    readonly account_holder: FieldRef<"PayletterDetail", 'String'>
-    readonly bank_code: FieldRef<"PayletterDetail", 'String'>
-    readonly bank_name: FieldRef<"PayletterDetail", 'String'>
-    readonly issue_tid: FieldRef<"PayletterDetail", 'String'>
-    readonly expire_date: FieldRef<"PayletterDetail", 'String'>
-    readonly expire_time: FieldRef<"PayletterDetail", 'String'>
+    readonly accountNo: FieldRef<"PayletterDetail", 'String'>
+    readonly accountName: FieldRef<"PayletterDetail", 'String'>
+    readonly accountHolder: FieldRef<"PayletterDetail", 'String'>
+    readonly bankCode: FieldRef<"PayletterDetail", 'String'>
+    readonly bankName: FieldRef<"PayletterDetail", 'String'>
+    readonly issueTid: FieldRef<"PayletterDetail", 'String'>
+    readonly expireDate: FieldRef<"PayletterDetail", 'String'>
+    readonly expireTime: FieldRef<"PayletterDetail", 'String'>
     readonly transactionDate: FieldRef<"PayletterDetail", 'DateTime'>
   }
     
@@ -9195,6 +9294,9 @@ export namespace Prisma {
     serviceName: 'serviceName',
     status: 'status',
     paidAt: 'paidAt',
+    successRedirectUrl: 'successRedirectUrl',
+    failureRedirectUrl: 'failureRedirectUrl',
+    cancelRedirectUrl: 'cancelRedirectUrl',
     createdAt: 'createdAt'
   };
 
@@ -9204,6 +9306,8 @@ export namespace Prisma {
   export const PayletterDetailScalarFieldEnum: {
     id: 'id',
     paymentId: 'paymentId',
+    userId: 'userId',
+    userName: 'userName',
     onlineUrl: 'onlineUrl',
     mobileUrl: 'mobileUrl',
     code: 'code',
@@ -9221,11 +9325,13 @@ export namespace Prisma {
     billkey: 'billkey',
     cardInfo: 'cardInfo',
     disposableCupDeposit: 'disposableCupDeposit',
+    amount: 'amount',
     taxAmount: 'taxAmount',
     taxfreeAmount: 'taxfreeAmount',
     nonsettleAmount: 'nonsettleAmount',
     couponAmount: 'couponAmount',
     receiptPossibleAmount: 'receiptPossibleAmount',
+    installMonth: 'installMonth',
     cashReceiptCid: 'cashReceiptCid',
     cashReceiptCode: 'cashReceiptCode',
     cashReceiptDealNo: 'cashReceiptDealNo',
@@ -9233,14 +9339,14 @@ export namespace Prisma {
     cashReceiptMessage: 'cashReceiptMessage',
     cashReceiptPayerSid: 'cashReceiptPayerSid',
     cashReceiptType: 'cashReceiptType',
-    account_no: 'account_no',
-    account_name: 'account_name',
-    account_holder: 'account_holder',
-    bank_code: 'bank_code',
-    bank_name: 'bank_name',
-    issue_tid: 'issue_tid',
-    expire_date: 'expire_date',
-    expire_time: 'expire_time',
+    accountNo: 'accountNo',
+    accountName: 'accountName',
+    accountHolder: 'accountHolder',
+    bankCode: 'bankCode',
+    bankName: 'bankName',
+    issueTid: 'issueTid',
+    expireDate: 'expireDate',
+    expireTime: 'expireTime',
     transactionDate: 'transactionDate'
   };
 
@@ -9709,6 +9815,9 @@ export namespace Prisma {
     serviceName?: StringFilter<"Payment"> | string
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    successRedirectUrl?: StringFilter<"Payment"> | string
+    failureRedirectUrl?: StringFilter<"Payment"> | string
+    cancelRedirectUrl?: StringFilter<"Payment"> | string
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     orders?: OrderListRelationFilter
     refunds?: RefundListRelationFilter
@@ -9723,6 +9832,9 @@ export namespace Prisma {
     serviceName?: SortOrder
     status?: SortOrder
     paidAt?: SortOrderInput | SortOrder
+    successRedirectUrl?: SortOrder
+    failureRedirectUrl?: SortOrder
+    cancelRedirectUrl?: SortOrder
     createdAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
     refunds?: RefundOrderByRelationAggregateInput
@@ -9740,6 +9852,9 @@ export namespace Prisma {
     serviceName?: StringFilter<"Payment"> | string
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    successRedirectUrl?: StringFilter<"Payment"> | string
+    failureRedirectUrl?: StringFilter<"Payment"> | string
+    cancelRedirectUrl?: StringFilter<"Payment"> | string
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     orders?: OrderListRelationFilter
     refunds?: RefundListRelationFilter
@@ -9754,6 +9869,9 @@ export namespace Prisma {
     serviceName?: SortOrder
     status?: SortOrder
     paidAt?: SortOrderInput | SortOrder
+    successRedirectUrl?: SortOrder
+    failureRedirectUrl?: SortOrder
+    cancelRedirectUrl?: SortOrder
     createdAt?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
     _avg?: PaymentAvgOrderByAggregateInput
@@ -9773,6 +9891,9 @@ export namespace Prisma {
     serviceName?: StringWithAggregatesFilter<"Payment"> | string
     status?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
+    successRedirectUrl?: StringWithAggregatesFilter<"Payment"> | string
+    failureRedirectUrl?: StringWithAggregatesFilter<"Payment"> | string
+    cancelRedirectUrl?: StringWithAggregatesFilter<"Payment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
   }
 
@@ -9782,6 +9903,8 @@ export namespace Prisma {
     NOT?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
     id?: StringFilter<"PayletterDetail"> | string
     paymentId?: StringFilter<"PayletterDetail"> | string
+    userId?: StringNullableFilter<"PayletterDetail"> | string | null
+    userName?: StringNullableFilter<"PayletterDetail"> | string | null
     onlineUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     mobileUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     code?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9798,12 +9921,14 @@ export namespace Prisma {
     domesticFlag?: StringNullableFilter<"PayletterDetail"> | string | null
     billkey?: StringNullableFilter<"PayletterDetail"> | string | null
     cardInfo?: StringNullableFilter<"PayletterDetail"> | string | null
-    disposableCupDeposit?: IntNullableFilter<"PayletterDetail"> | number | null
-    taxAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    taxfreeAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    nonsettleAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    couponAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    receiptPossibleAmount?: IntNullableFilter<"PayletterDetail"> | number | null
+    disposableCupDeposit?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    amount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    installMonth?: IntNullableFilter<"PayletterDetail"> | number | null
     cashReceiptCid?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptCode?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptDealNo?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9811,14 +9936,14 @@ export namespace Prisma {
     cashReceiptMessage?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptPayerSid?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptType?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_no?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_name?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_holder?: StringNullableFilter<"PayletterDetail"> | string | null
-    bank_code?: StringNullableFilter<"PayletterDetail"> | string | null
-    bank_name?: StringNullableFilter<"PayletterDetail"> | string | null
-    issue_tid?: StringNullableFilter<"PayletterDetail"> | string | null
-    expire_date?: StringNullableFilter<"PayletterDetail"> | string | null
-    expire_time?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountNo?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountName?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountHolder?: StringNullableFilter<"PayletterDetail"> | string | null
+    bankCode?: StringNullableFilter<"PayletterDetail"> | string | null
+    bankName?: StringNullableFilter<"PayletterDetail"> | string | null
+    issueTid?: StringNullableFilter<"PayletterDetail"> | string | null
+    expireDate?: StringNullableFilter<"PayletterDetail"> | string | null
+    expireTime?: StringNullableFilter<"PayletterDetail"> | string | null
     transactionDate?: DateTimeNullableFilter<"PayletterDetail"> | Date | string | null
     payment?: XOR<PaymentScalarRelationFilter, PaymentWhereInput>
   }
@@ -9826,6 +9951,8 @@ export namespace Prisma {
   export type PayletterDetailOrderByWithRelationInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userName?: SortOrderInput | SortOrder
     onlineUrl?: SortOrderInput | SortOrder
     mobileUrl?: SortOrderInput | SortOrder
     code?: SortOrderInput | SortOrder
@@ -9843,11 +9970,13 @@ export namespace Prisma {
     billkey?: SortOrderInput | SortOrder
     cardInfo?: SortOrderInput | SortOrder
     disposableCupDeposit?: SortOrderInput | SortOrder
+    amount?: SortOrderInput | SortOrder
     taxAmount?: SortOrderInput | SortOrder
     taxfreeAmount?: SortOrderInput | SortOrder
     nonsettleAmount?: SortOrderInput | SortOrder
     couponAmount?: SortOrderInput | SortOrder
     receiptPossibleAmount?: SortOrderInput | SortOrder
+    installMonth?: SortOrderInput | SortOrder
     cashReceiptCid?: SortOrderInput | SortOrder
     cashReceiptCode?: SortOrderInput | SortOrder
     cashReceiptDealNo?: SortOrderInput | SortOrder
@@ -9855,14 +9984,14 @@ export namespace Prisma {
     cashReceiptMessage?: SortOrderInput | SortOrder
     cashReceiptPayerSid?: SortOrderInput | SortOrder
     cashReceiptType?: SortOrderInput | SortOrder
-    account_no?: SortOrderInput | SortOrder
-    account_name?: SortOrderInput | SortOrder
-    account_holder?: SortOrderInput | SortOrder
-    bank_code?: SortOrderInput | SortOrder
-    bank_name?: SortOrderInput | SortOrder
-    issue_tid?: SortOrderInput | SortOrder
-    expire_date?: SortOrderInput | SortOrder
-    expire_time?: SortOrderInput | SortOrder
+    accountNo?: SortOrderInput | SortOrder
+    accountName?: SortOrderInput | SortOrder
+    accountHolder?: SortOrderInput | SortOrder
+    bankCode?: SortOrderInput | SortOrder
+    bankName?: SortOrderInput | SortOrder
+    issueTid?: SortOrderInput | SortOrder
+    expireDate?: SortOrderInput | SortOrder
+    expireTime?: SortOrderInput | SortOrder
     transactionDate?: SortOrderInput | SortOrder
     payment?: PaymentOrderByWithRelationInput
   }
@@ -9874,6 +10003,8 @@ export namespace Prisma {
     AND?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
     OR?: PayletterDetailWhereInput[]
     NOT?: PayletterDetailWhereInput | PayletterDetailWhereInput[]
+    userId?: StringNullableFilter<"PayletterDetail"> | string | null
+    userName?: StringNullableFilter<"PayletterDetail"> | string | null
     onlineUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     mobileUrl?: StringNullableFilter<"PayletterDetail"> | string | null
     code?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9889,12 +10020,14 @@ export namespace Prisma {
     domesticFlag?: StringNullableFilter<"PayletterDetail"> | string | null
     billkey?: StringNullableFilter<"PayletterDetail"> | string | null
     cardInfo?: StringNullableFilter<"PayletterDetail"> | string | null
-    disposableCupDeposit?: IntNullableFilter<"PayletterDetail"> | number | null
-    taxAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    taxfreeAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    nonsettleAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    couponAmount?: IntNullableFilter<"PayletterDetail"> | number | null
-    receiptPossibleAmount?: IntNullableFilter<"PayletterDetail"> | number | null
+    disposableCupDeposit?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    amount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: DecimalNullableFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    installMonth?: IntNullableFilter<"PayletterDetail"> | number | null
     cashReceiptCid?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptCode?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptDealNo?: StringNullableFilter<"PayletterDetail"> | string | null
@@ -9902,14 +10035,14 @@ export namespace Prisma {
     cashReceiptMessage?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptPayerSid?: StringNullableFilter<"PayletterDetail"> | string | null
     cashReceiptType?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_no?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_name?: StringNullableFilter<"PayletterDetail"> | string | null
-    account_holder?: StringNullableFilter<"PayletterDetail"> | string | null
-    bank_code?: StringNullableFilter<"PayletterDetail"> | string | null
-    bank_name?: StringNullableFilter<"PayletterDetail"> | string | null
-    issue_tid?: StringNullableFilter<"PayletterDetail"> | string | null
-    expire_date?: StringNullableFilter<"PayletterDetail"> | string | null
-    expire_time?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountNo?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountName?: StringNullableFilter<"PayletterDetail"> | string | null
+    accountHolder?: StringNullableFilter<"PayletterDetail"> | string | null
+    bankCode?: StringNullableFilter<"PayletterDetail"> | string | null
+    bankName?: StringNullableFilter<"PayletterDetail"> | string | null
+    issueTid?: StringNullableFilter<"PayletterDetail"> | string | null
+    expireDate?: StringNullableFilter<"PayletterDetail"> | string | null
+    expireTime?: StringNullableFilter<"PayletterDetail"> | string | null
     transactionDate?: DateTimeNullableFilter<"PayletterDetail"> | Date | string | null
     payment?: XOR<PaymentScalarRelationFilter, PaymentWhereInput>
   }, "id" | "paymentId" | "tid">
@@ -9917,6 +10050,8 @@ export namespace Prisma {
   export type PayletterDetailOrderByWithAggregationInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    userName?: SortOrderInput | SortOrder
     onlineUrl?: SortOrderInput | SortOrder
     mobileUrl?: SortOrderInput | SortOrder
     code?: SortOrderInput | SortOrder
@@ -9934,11 +10069,13 @@ export namespace Prisma {
     billkey?: SortOrderInput | SortOrder
     cardInfo?: SortOrderInput | SortOrder
     disposableCupDeposit?: SortOrderInput | SortOrder
+    amount?: SortOrderInput | SortOrder
     taxAmount?: SortOrderInput | SortOrder
     taxfreeAmount?: SortOrderInput | SortOrder
     nonsettleAmount?: SortOrderInput | SortOrder
     couponAmount?: SortOrderInput | SortOrder
     receiptPossibleAmount?: SortOrderInput | SortOrder
+    installMonth?: SortOrderInput | SortOrder
     cashReceiptCid?: SortOrderInput | SortOrder
     cashReceiptCode?: SortOrderInput | SortOrder
     cashReceiptDealNo?: SortOrderInput | SortOrder
@@ -9946,14 +10083,14 @@ export namespace Prisma {
     cashReceiptMessage?: SortOrderInput | SortOrder
     cashReceiptPayerSid?: SortOrderInput | SortOrder
     cashReceiptType?: SortOrderInput | SortOrder
-    account_no?: SortOrderInput | SortOrder
-    account_name?: SortOrderInput | SortOrder
-    account_holder?: SortOrderInput | SortOrder
-    bank_code?: SortOrderInput | SortOrder
-    bank_name?: SortOrderInput | SortOrder
-    issue_tid?: SortOrderInput | SortOrder
-    expire_date?: SortOrderInput | SortOrder
-    expire_time?: SortOrderInput | SortOrder
+    accountNo?: SortOrderInput | SortOrder
+    accountName?: SortOrderInput | SortOrder
+    accountHolder?: SortOrderInput | SortOrder
+    bankCode?: SortOrderInput | SortOrder
+    bankName?: SortOrderInput | SortOrder
+    issueTid?: SortOrderInput | SortOrder
+    expireDate?: SortOrderInput | SortOrder
+    expireTime?: SortOrderInput | SortOrder
     transactionDate?: SortOrderInput | SortOrder
     _count?: PayletterDetailCountOrderByAggregateInput
     _avg?: PayletterDetailAvgOrderByAggregateInput
@@ -9968,6 +10105,8 @@ export namespace Prisma {
     NOT?: PayletterDetailScalarWhereWithAggregatesInput | PayletterDetailScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PayletterDetail"> | string
     paymentId?: StringWithAggregatesFilter<"PayletterDetail"> | string
+    userId?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    userName?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     onlineUrl?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     mobileUrl?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     code?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
@@ -9984,12 +10123,14 @@ export namespace Prisma {
     domesticFlag?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     billkey?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     cardInfo?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    disposableCupDeposit?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
-    taxAmount?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
-    taxfreeAmount?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
-    nonsettleAmount?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
-    couponAmount?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
-    receiptPossibleAmount?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
+    disposableCupDeposit?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    amount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: DecimalNullableWithAggregatesFilter<"PayletterDetail"> | Decimal | DecimalJsLike | number | string | null
+    installMonth?: IntNullableWithAggregatesFilter<"PayletterDetail"> | number | null
     cashReceiptCid?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     cashReceiptCode?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     cashReceiptDealNo?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
@@ -9997,14 +10138,14 @@ export namespace Prisma {
     cashReceiptMessage?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     cashReceiptPayerSid?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     cashReceiptType?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    account_no?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    account_name?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    account_holder?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    bank_code?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    bank_name?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    issue_tid?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    expire_date?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
-    expire_time?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    accountNo?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    accountName?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    accountHolder?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    bankCode?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    bankName?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    issueTid?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    expireDate?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
+    expireTime?: StringNullableWithAggregatesFilter<"PayletterDetail"> | string | null
     transactionDate?: DateTimeNullableWithAggregatesFilter<"PayletterDetail"> | Date | string | null
   }
 
@@ -10380,6 +10521,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
     refunds?: RefundCreateNestedManyWithoutPaymentInput
@@ -10394,6 +10538,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
     refunds?: RefundUncheckedCreateNestedManyWithoutPaymentInput
@@ -10408,6 +10555,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
     refunds?: RefundUpdateManyWithoutPaymentNestedInput
@@ -10422,6 +10572,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput
     refunds?: RefundUncheckedUpdateManyWithoutPaymentNestedInput
@@ -10436,6 +10589,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
   }
 
@@ -10447,6 +10603,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10458,11 +10617,16 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayletterDetailCreateInput = {
     id?: string
+    userId?: string | null
+    userName?: string | null
     onlineUrl?: string | null
     mobileUrl?: string | null
     code?: string | null
@@ -10479,12 +10643,14 @@ export namespace Prisma {
     domesticFlag?: string | null
     billkey?: string | null
     cardInfo?: string | null
-    disposableCupDeposit?: number | null
-    taxAmount?: number | null
-    taxfreeAmount?: number | null
-    nonsettleAmount?: number | null
-    couponAmount?: number | null
-    receiptPossibleAmount?: number | null
+    disposableCupDeposit?: Decimal | DecimalJsLike | number | string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    taxAmount?: Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: Decimal | DecimalJsLike | number | string | null
+    couponAmount?: Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: Decimal | DecimalJsLike | number | string | null
+    installMonth?: number | null
     cashReceiptCid?: string | null
     cashReceiptCode?: string | null
     cashReceiptDealNo?: string | null
@@ -10492,14 +10658,14 @@ export namespace Prisma {
     cashReceiptMessage?: string | null
     cashReceiptPayerSid?: string | null
     cashReceiptType?: string | null
-    account_no?: string | null
-    account_name?: string | null
-    account_holder?: string | null
-    bank_code?: string | null
-    bank_name?: string | null
-    issue_tid?: string | null
-    expire_date?: string | null
-    expire_time?: string | null
+    accountNo?: string | null
+    accountName?: string | null
+    accountHolder?: string | null
+    bankCode?: string | null
+    bankName?: string | null
+    issueTid?: string | null
+    expireDate?: string | null
+    expireTime?: string | null
     transactionDate?: Date | string | null
     payment: PaymentCreateNestedOneWithoutPayletterDetailInput
   }
@@ -10507,6 +10673,8 @@ export namespace Prisma {
   export type PayletterDetailUncheckedCreateInput = {
     id?: string
     paymentId: string
+    userId?: string | null
+    userName?: string | null
     onlineUrl?: string | null
     mobileUrl?: string | null
     code?: string | null
@@ -10523,12 +10691,14 @@ export namespace Prisma {
     domesticFlag?: string | null
     billkey?: string | null
     cardInfo?: string | null
-    disposableCupDeposit?: number | null
-    taxAmount?: number | null
-    taxfreeAmount?: number | null
-    nonsettleAmount?: number | null
-    couponAmount?: number | null
-    receiptPossibleAmount?: number | null
+    disposableCupDeposit?: Decimal | DecimalJsLike | number | string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    taxAmount?: Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: Decimal | DecimalJsLike | number | string | null
+    couponAmount?: Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: Decimal | DecimalJsLike | number | string | null
+    installMonth?: number | null
     cashReceiptCid?: string | null
     cashReceiptCode?: string | null
     cashReceiptDealNo?: string | null
@@ -10536,19 +10706,21 @@ export namespace Prisma {
     cashReceiptMessage?: string | null
     cashReceiptPayerSid?: string | null
     cashReceiptType?: string | null
-    account_no?: string | null
-    account_name?: string | null
-    account_holder?: string | null
-    bank_code?: string | null
-    bank_name?: string | null
-    issue_tid?: string | null
-    expire_date?: string | null
-    expire_time?: string | null
+    accountNo?: string | null
+    accountName?: string | null
+    accountHolder?: string | null
+    bankCode?: string | null
+    bankName?: string | null
+    issueTid?: string | null
+    expireDate?: string | null
+    expireTime?: string | null
     transactionDate?: Date | string | null
   }
 
   export type PayletterDetailUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10565,12 +10737,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10578,14 +10752,14 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     payment?: PaymentUpdateOneRequiredWithoutPayletterDetailNestedInput
   }
@@ -10593,6 +10767,8 @@ export namespace Prisma {
   export type PayletterDetailUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     paymentId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10609,12 +10785,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10622,20 +10800,22 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PayletterDetailCreateManyInput = {
     id?: string
     paymentId: string
+    userId?: string | null
+    userName?: string | null
     onlineUrl?: string | null
     mobileUrl?: string | null
     code?: string | null
@@ -10652,12 +10832,14 @@ export namespace Prisma {
     domesticFlag?: string | null
     billkey?: string | null
     cardInfo?: string | null
-    disposableCupDeposit?: number | null
-    taxAmount?: number | null
-    taxfreeAmount?: number | null
-    nonsettleAmount?: number | null
-    couponAmount?: number | null
-    receiptPossibleAmount?: number | null
+    disposableCupDeposit?: Decimal | DecimalJsLike | number | string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    taxAmount?: Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: Decimal | DecimalJsLike | number | string | null
+    couponAmount?: Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: Decimal | DecimalJsLike | number | string | null
+    installMonth?: number | null
     cashReceiptCid?: string | null
     cashReceiptCode?: string | null
     cashReceiptDealNo?: string | null
@@ -10665,19 +10847,21 @@ export namespace Prisma {
     cashReceiptMessage?: string | null
     cashReceiptPayerSid?: string | null
     cashReceiptType?: string | null
-    account_no?: string | null
-    account_name?: string | null
-    account_holder?: string | null
-    bank_code?: string | null
-    bank_name?: string | null
-    issue_tid?: string | null
-    expire_date?: string | null
-    expire_time?: string | null
+    accountNo?: string | null
+    accountName?: string | null
+    accountHolder?: string | null
+    bankCode?: string | null
+    bankName?: string | null
+    issueTid?: string | null
+    expireDate?: string | null
+    expireTime?: string | null
     transactionDate?: Date | string | null
   }
 
   export type PayletterDetailUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10694,12 +10878,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10707,20 +10893,22 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PayletterDetailUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     paymentId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10737,12 +10925,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10750,14 +10940,14 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -11327,6 +11517,9 @@ export namespace Prisma {
     serviceName?: SortOrder
     status?: SortOrder
     paidAt?: SortOrder
+    successRedirectUrl?: SortOrder
+    failureRedirectUrl?: SortOrder
+    cancelRedirectUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11342,6 +11535,9 @@ export namespace Prisma {
     serviceName?: SortOrder
     status?: SortOrder
     paidAt?: SortOrder
+    successRedirectUrl?: SortOrder
+    failureRedirectUrl?: SortOrder
+    cancelRedirectUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11353,6 +11549,9 @@ export namespace Prisma {
     serviceName?: SortOrder
     status?: SortOrder
     paidAt?: SortOrder
+    successRedirectUrl?: SortOrder
+    failureRedirectUrl?: SortOrder
+    cancelRedirectUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11412,6 +11611,8 @@ export namespace Prisma {
   export type PayletterDetailCountOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
     onlineUrl?: SortOrder
     mobileUrl?: SortOrder
     code?: SortOrder
@@ -11429,11 +11630,13 @@ export namespace Prisma {
     billkey?: SortOrder
     cardInfo?: SortOrder
     disposableCupDeposit?: SortOrder
+    amount?: SortOrder
     taxAmount?: SortOrder
     taxfreeAmount?: SortOrder
     nonsettleAmount?: SortOrder
     couponAmount?: SortOrder
     receiptPossibleAmount?: SortOrder
+    installMonth?: SortOrder
     cashReceiptCid?: SortOrder
     cashReceiptCode?: SortOrder
     cashReceiptDealNo?: SortOrder
@@ -11441,29 +11644,33 @@ export namespace Prisma {
     cashReceiptMessage?: SortOrder
     cashReceiptPayerSid?: SortOrder
     cashReceiptType?: SortOrder
-    account_no?: SortOrder
-    account_name?: SortOrder
-    account_holder?: SortOrder
-    bank_code?: SortOrder
-    bank_name?: SortOrder
-    issue_tid?: SortOrder
-    expire_date?: SortOrder
-    expire_time?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    accountHolder?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    issueTid?: SortOrder
+    expireDate?: SortOrder
+    expireTime?: SortOrder
     transactionDate?: SortOrder
   }
 
   export type PayletterDetailAvgOrderByAggregateInput = {
     disposableCupDeposit?: SortOrder
+    amount?: SortOrder
     taxAmount?: SortOrder
     taxfreeAmount?: SortOrder
     nonsettleAmount?: SortOrder
     couponAmount?: SortOrder
     receiptPossibleAmount?: SortOrder
+    installMonth?: SortOrder
   }
 
   export type PayletterDetailMaxOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
     onlineUrl?: SortOrder
     mobileUrl?: SortOrder
     code?: SortOrder
@@ -11481,11 +11688,13 @@ export namespace Prisma {
     billkey?: SortOrder
     cardInfo?: SortOrder
     disposableCupDeposit?: SortOrder
+    amount?: SortOrder
     taxAmount?: SortOrder
     taxfreeAmount?: SortOrder
     nonsettleAmount?: SortOrder
     couponAmount?: SortOrder
     receiptPossibleAmount?: SortOrder
+    installMonth?: SortOrder
     cashReceiptCid?: SortOrder
     cashReceiptCode?: SortOrder
     cashReceiptDealNo?: SortOrder
@@ -11493,20 +11702,22 @@ export namespace Prisma {
     cashReceiptMessage?: SortOrder
     cashReceiptPayerSid?: SortOrder
     cashReceiptType?: SortOrder
-    account_no?: SortOrder
-    account_name?: SortOrder
-    account_holder?: SortOrder
-    bank_code?: SortOrder
-    bank_name?: SortOrder
-    issue_tid?: SortOrder
-    expire_date?: SortOrder
-    expire_time?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    accountHolder?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    issueTid?: SortOrder
+    expireDate?: SortOrder
+    expireTime?: SortOrder
     transactionDate?: SortOrder
   }
 
   export type PayletterDetailMinOrderByAggregateInput = {
     id?: SortOrder
     paymentId?: SortOrder
+    userId?: SortOrder
+    userName?: SortOrder
     onlineUrl?: SortOrder
     mobileUrl?: SortOrder
     code?: SortOrder
@@ -11524,11 +11735,13 @@ export namespace Prisma {
     billkey?: SortOrder
     cardInfo?: SortOrder
     disposableCupDeposit?: SortOrder
+    amount?: SortOrder
     taxAmount?: SortOrder
     taxfreeAmount?: SortOrder
     nonsettleAmount?: SortOrder
     couponAmount?: SortOrder
     receiptPossibleAmount?: SortOrder
+    installMonth?: SortOrder
     cashReceiptCid?: SortOrder
     cashReceiptCode?: SortOrder
     cashReceiptDealNo?: SortOrder
@@ -11536,24 +11749,26 @@ export namespace Prisma {
     cashReceiptMessage?: SortOrder
     cashReceiptPayerSid?: SortOrder
     cashReceiptType?: SortOrder
-    account_no?: SortOrder
-    account_name?: SortOrder
-    account_holder?: SortOrder
-    bank_code?: SortOrder
-    bank_name?: SortOrder
-    issue_tid?: SortOrder
-    expire_date?: SortOrder
-    expire_time?: SortOrder
+    accountNo?: SortOrder
+    accountName?: SortOrder
+    accountHolder?: SortOrder
+    bankCode?: SortOrder
+    bankName?: SortOrder
+    issueTid?: SortOrder
+    expireDate?: SortOrder
+    expireTime?: SortOrder
     transactionDate?: SortOrder
   }
 
   export type PayletterDetailSumOrderByAggregateInput = {
     disposableCupDeposit?: SortOrder
+    amount?: SortOrder
     taxAmount?: SortOrder
     taxfreeAmount?: SortOrder
     nonsettleAmount?: SortOrder
     couponAmount?: SortOrder
     receiptPossibleAmount?: SortOrder
+    installMonth?: SortOrder
   }
 
   export type OrderItemNullableScalarRelationFilter = {
@@ -12516,6 +12731,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     refunds?: RefundCreateNestedManyWithoutPaymentInput
     payletterDetail?: PayletterDetailCreateNestedOneWithoutPaymentInput
@@ -12529,6 +12747,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     refunds?: RefundUncheckedCreateNestedManyWithoutPaymentInput
     payletterDetail?: PayletterDetailUncheckedCreateNestedOneWithoutPaymentInput
@@ -12604,6 +12825,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refunds?: RefundUpdateManyWithoutPaymentNestedInput
     payletterDetail?: PayletterDetailUpdateOneWithoutPaymentNestedInput
@@ -12617,6 +12841,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refunds?: RefundUncheckedUpdateManyWithoutPaymentNestedInput
     payletterDetail?: PayletterDetailUncheckedUpdateOneWithoutPaymentNestedInput
@@ -12910,6 +13137,8 @@ export namespace Prisma {
 
   export type PayletterDetailCreateWithoutPaymentInput = {
     id?: string
+    userId?: string | null
+    userName?: string | null
     onlineUrl?: string | null
     mobileUrl?: string | null
     code?: string | null
@@ -12926,12 +13155,14 @@ export namespace Prisma {
     domesticFlag?: string | null
     billkey?: string | null
     cardInfo?: string | null
-    disposableCupDeposit?: number | null
-    taxAmount?: number | null
-    taxfreeAmount?: number | null
-    nonsettleAmount?: number | null
-    couponAmount?: number | null
-    receiptPossibleAmount?: number | null
+    disposableCupDeposit?: Decimal | DecimalJsLike | number | string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    taxAmount?: Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: Decimal | DecimalJsLike | number | string | null
+    couponAmount?: Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: Decimal | DecimalJsLike | number | string | null
+    installMonth?: number | null
     cashReceiptCid?: string | null
     cashReceiptCode?: string | null
     cashReceiptDealNo?: string | null
@@ -12939,19 +13170,21 @@ export namespace Prisma {
     cashReceiptMessage?: string | null
     cashReceiptPayerSid?: string | null
     cashReceiptType?: string | null
-    account_no?: string | null
-    account_name?: string | null
-    account_holder?: string | null
-    bank_code?: string | null
-    bank_name?: string | null
-    issue_tid?: string | null
-    expire_date?: string | null
-    expire_time?: string | null
+    accountNo?: string | null
+    accountName?: string | null
+    accountHolder?: string | null
+    bankCode?: string | null
+    bankName?: string | null
+    issueTid?: string | null
+    expireDate?: string | null
+    expireTime?: string | null
     transactionDate?: Date | string | null
   }
 
   export type PayletterDetailUncheckedCreateWithoutPaymentInput = {
     id?: string
+    userId?: string | null
+    userName?: string | null
     onlineUrl?: string | null
     mobileUrl?: string | null
     code?: string | null
@@ -12968,12 +13201,14 @@ export namespace Prisma {
     domesticFlag?: string | null
     billkey?: string | null
     cardInfo?: string | null
-    disposableCupDeposit?: number | null
-    taxAmount?: number | null
-    taxfreeAmount?: number | null
-    nonsettleAmount?: number | null
-    couponAmount?: number | null
-    receiptPossibleAmount?: number | null
+    disposableCupDeposit?: Decimal | DecimalJsLike | number | string | null
+    amount?: Decimal | DecimalJsLike | number | string | null
+    taxAmount?: Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: Decimal | DecimalJsLike | number | string | null
+    couponAmount?: Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: Decimal | DecimalJsLike | number | string | null
+    installMonth?: number | null
     cashReceiptCid?: string | null
     cashReceiptCode?: string | null
     cashReceiptDealNo?: string | null
@@ -12981,14 +13216,14 @@ export namespace Prisma {
     cashReceiptMessage?: string | null
     cashReceiptPayerSid?: string | null
     cashReceiptType?: string | null
-    account_no?: string | null
-    account_name?: string | null
-    account_holder?: string | null
-    bank_code?: string | null
-    bank_name?: string | null
-    issue_tid?: string | null
-    expire_date?: string | null
-    expire_time?: string | null
+    accountNo?: string | null
+    accountName?: string | null
+    accountHolder?: string | null
+    bankCode?: string | null
+    bankName?: string | null
+    issueTid?: string | null
+    expireDate?: string | null
+    expireTime?: string | null
     transactionDate?: Date | string | null
   }
 
@@ -13057,6 +13292,8 @@ export namespace Prisma {
 
   export type PayletterDetailUpdateWithoutPaymentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13073,12 +13310,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13086,19 +13325,21 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PayletterDetailUncheckedUpdateWithoutPaymentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    userName?: NullableStringFieldUpdateOperationsInput | string | null
     onlineUrl?: NullableStringFieldUpdateOperationsInput | string | null
     mobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
     code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13115,12 +13356,14 @@ export namespace Prisma {
     domesticFlag?: NullableStringFieldUpdateOperationsInput | string | null
     billkey?: NullableStringFieldUpdateOperationsInput | string | null
     cardInfo?: NullableStringFieldUpdateOperationsInput | string | null
-    disposableCupDeposit?: NullableIntFieldUpdateOperationsInput | number | null
-    taxAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    taxfreeAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    nonsettleAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    couponAmount?: NullableIntFieldUpdateOperationsInput | number | null
-    receiptPossibleAmount?: NullableIntFieldUpdateOperationsInput | number | null
+    disposableCupDeposit?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    taxfreeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    nonsettleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    couponAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    receiptPossibleAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    installMonth?: NullableIntFieldUpdateOperationsInput | number | null
     cashReceiptCid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptCode?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptDealNo?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13128,14 +13371,14 @@ export namespace Prisma {
     cashReceiptMessage?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptPayerSid?: NullableStringFieldUpdateOperationsInput | string | null
     cashReceiptType?: NullableStringFieldUpdateOperationsInput | string | null
-    account_no?: NullableStringFieldUpdateOperationsInput | string | null
-    account_name?: NullableStringFieldUpdateOperationsInput | string | null
-    account_holder?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_code?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    issue_tid?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_date?: NullableStringFieldUpdateOperationsInput | string | null
-    expire_time?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNo?: NullableStringFieldUpdateOperationsInput | string | null
+    accountName?: NullableStringFieldUpdateOperationsInput | string | null
+    accountHolder?: NullableStringFieldUpdateOperationsInput | string | null
+    bankCode?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    issueTid?: NullableStringFieldUpdateOperationsInput | string | null
+    expireDate?: NullableStringFieldUpdateOperationsInput | string | null
+    expireTime?: NullableStringFieldUpdateOperationsInput | string | null
     transactionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -13147,6 +13390,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
     refunds?: RefundCreateNestedManyWithoutPaymentInput
@@ -13160,6 +13406,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
     refunds?: RefundUncheckedCreateNestedManyWithoutPaymentInput
@@ -13189,6 +13438,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
     refunds?: RefundUpdateManyWithoutPaymentNestedInput
@@ -13202,6 +13454,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput
     refunds?: RefundUncheckedUpdateManyWithoutPaymentNestedInput
@@ -13215,6 +13470,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutPaymentInput
     payletterDetail?: PayletterDetailCreateNestedOneWithoutPaymentInput
@@ -13228,6 +13486,9 @@ export namespace Prisma {
     serviceName: string
     status: $Enums.PaymentStatus
     paidAt?: Date | string | null
+    successRedirectUrl: string
+    failureRedirectUrl: string
+    cancelRedirectUrl: string
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutPaymentInput
     payletterDetail?: PayletterDetailUncheckedCreateNestedOneWithoutPaymentInput
@@ -13317,6 +13578,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutPaymentNestedInput
     payletterDetail?: PayletterDetailUpdateOneWithoutPaymentNestedInput
@@ -13330,6 +13594,9 @@ export namespace Prisma {
     serviceName?: StringFieldUpdateOperationsInput | string
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    successRedirectUrl?: StringFieldUpdateOperationsInput | string
+    failureRedirectUrl?: StringFieldUpdateOperationsInput | string
+    cancelRedirectUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutPaymentNestedInput
     payletterDetail?: PayletterDetailUncheckedUpdateOneWithoutPaymentNestedInput

@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { Decimal } from '@prisma/client/runtime/client';
+import { Transform, Type } from 'class-transformer';
+import { IsDecimal, IsInt, IsOptional } from 'class-validator';
 
 export class CashReceipt {
   @ApiProperty({ description: '현금영수증 발행 번호' })
@@ -45,22 +47,24 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   cid: string;
 
   @ApiProperty({ description: '결제금액' })
-  amount: number;
+  @Type(() => Decimal)
+  amount: Decimal;
 
   @ApiProperty({ description: '비과세 금액' })
-  taxfree_amount: number;
+  @Type(() => Decimal)
+  @IsDecimal()
+  taxfree_amount: Decimal;
 
   @ApiProperty({ description: '부가세 금액' })
-  tax_amount: number;
+  tax_amount: Decimal;
 
   @ApiProperty({ description: '결제 해시값' })
   payhash: string;
 
-  @ApiProperty({ description: '할인 금액' })
-  discount_amount: number;
-
   @ApiProperty({ description: '일회용 컵 보증금' })
-  disposable_cup_deposit: number;
+  @Type(() => Decimal)
+  @IsDecimal()
+  disposable_cup_deposit: Decimal;
 
   @ApiProperty({ description: '결제자 아이디' })
   user_id: string;
@@ -74,7 +78,13 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   @ApiProperty({ description: '결제 상품명' })
   product_name: string;
 
-  @ApiProperty({ description: '결제 완료 시간' })
+  @ApiProperty({ description: '결제 완료 시각' })
+  @Transform(({ value }: { value: string }) => {
+    if (!value) return value;
+    // "2025-05-22 14:14:53" -> "2025-05-22T14:14:53.000Z"
+    const [date, time] = value.split(' ');
+    return new Date(`${date}T${time}.000Z`).toISOString();
+  })
   transaction_date: string;
 
   @ApiProperty({ description: '결과 코드' })
@@ -90,10 +100,6 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   @IsOptional()
   billkey?: string;
 
-  @ApiPropertyOptional({ description: '카드 코드' })
-  @IsOptional()
-  card_code?: string;
-
   @ApiPropertyOptional({ description: '카드 정보' })
   @IsOptional()
   card_info?: string;
@@ -104,7 +110,9 @@ export class PayletterPaymentsReturnSuccessResponseDto {
 
   @ApiPropertyOptional({ description: '할부 개월' })
   @IsOptional()
-  install_month?: string;
+  @Type(() => Number)
+  @IsInt()
+  install_month?: number;
 
   @ApiProperty({ description: '가맹점 주문번호' })
   order_no: string;
@@ -112,10 +120,6 @@ export class PayletterPaymentsReturnSuccessResponseDto {
   @ApiPropertyOptional({ description: '결제 정보' })
   @IsOptional()
   pay_info?: string;
-
-  @ApiPropertyOptional({ description: '포인트 사용 여부' })
-  @IsOptional()
-  pointuse_flag?: string;
 
   toCamelCase() {
     return {
@@ -125,7 +129,6 @@ export class PayletterPaymentsReturnSuccessResponseDto {
       taxfreeAmount: this.taxfree_amount,
       taxAmount: this.tax_amount,
       payhash: this.payhash,
-      discountAmount: this.discount_amount,
       disposableCupDeposit: this.disposable_cup_deposit,
       userId: this.user_id,
       pgcode: this.pgcode,
@@ -136,13 +139,11 @@ export class PayletterPaymentsReturnSuccessResponseDto {
       message: this.message,
       userName: this.user_name,
       billkey: this.billkey,
-      cardCode: this.card_code,
       cardInfo: this.card_info,
       domesticFlag: this.domestic_flag,
       installMonth: this.install_month,
       orderNo: this.order_no,
       payInfo: this.pay_info,
-      pointuseFlag: this.pointuse_flag,
     };
   }
 }
@@ -186,13 +187,17 @@ export class PayletterPaymentsCallbackSuccessResponseDto extends PayletterPaymen
   method_info: string;
 
   @ApiProperty({ description: '쿠폰 사용 금액' })
-  coupon_amount: number;
+  @Type(() => Decimal)
+  @IsDecimal()
+  coupon_amount: Decimal;
 
   @ApiProperty({
     description:
       'SSG페이, 네이버페이에서 충전형 포인트에 대한 현금영수증 발급가능 금액',
   })
-  receipt_possible_amount: number;
+  @Type(() => Decimal)
+  @IsDecimal()
+  receipt_possible_amount: Decimal;
 
   @ApiPropertyOptional({ type: CashReceipt })
   @IsOptional()

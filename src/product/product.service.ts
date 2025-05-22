@@ -19,7 +19,7 @@ export class ProductService {
 
   async create(request: CreateProductRequest) {
     const product = await this.prismaService.product.create({
-      data: request,
+      data: { ...request },
     });
 
     return plainToInstance(DetailProductResponse, product);

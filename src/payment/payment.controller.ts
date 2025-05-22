@@ -1,5 +1,6 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Res } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { PgProviderType } from 'generated/prisma';
 import { PaymentServiceFactory } from './payment-service.factory';
 import { PgProviderPipe } from './pg-provider.pipe';
@@ -14,41 +15,47 @@ export class PaymentController {
   constructor(private readonly paymentServiceFactory: PaymentServiceFactory) {}
 
   @ApiOperation({ summary: '결제 후 처리 (콜백)' })
-  @Post(`${CALLBACK_URL_PREFIX}:pgProvider`)
-  handleCallback(
+  @Post(`:paymentId/callback/:pgProvider`)
+  async handleCallback(
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProviderType,
     @Body() request: any,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.paymentServiceFactory
-      .getProvider(pgProvider)
-      .handleCallback(request);
+    const provider = this.paymentServiceFactory.getProvider(pgProvider);
+    return provider.handleCallback(
+      paymentId,
+      provider.transformCallbackData(request),
+    );
   }
 
   @ApiOperation({ summary: '결제 후 처리 (리턴)' })
-  @Post(`${RETURN_URL_PREFIX}:pgProvider`)
-  handleReturn(
+  @Post(`:paymentId/return/:pgProvider`)
+  async handleReturn(
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProviderType,
+    @Res() res: Response,
     @Body() request: any,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.paymentServiceFactory
-      .getProvider(pgProvider)
-      .handleCallback(request);
+    const provider = this.paymentServiceFactory.getProvider(pgProvider);
+    const redirectUrl = await provider.handleReturn(
+      paymentId,
+      provider.transformReturnData(request),
+    );
+
+    res.redirect(redirectUrl);
   }
 
-  @ApiOperation({ summary: '결제 후 처리 (리턴)' })
-  @Post(`${CANCEL_URL_PREFIX}:pgProvider`)
-  handleCancel(
+  @ApiOperation({ summary: '결제 취소 처리' })
+  @Post(`:paymentId/cancel/:pgProvider`)
+  async handleCancel(
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProviderType,
     @Body() request: any,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.paymentServiceFactory
-      .getProvider(pgProvider)
-      .handleCallback(request);
+    const provider = this.paymentServiceFactory.getProvider(pgProvider);
+    return provider.handleCancel(
+      paymentId,
+      provider.transformCancelData(request),
+    );
   }
 }
