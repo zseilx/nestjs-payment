@@ -16,6 +16,7 @@ import { PrismaService } from 'src/config/prisma/prisma.service';
 import { OrderService } from 'src/order/order.service';
 import { AbstractPaymentService } from '../abstract-payment-service';
 import { CreatePaymentRequest } from '../dto/create-payment.request';
+import { CreatePaymentResponse } from '../dto/create-payment.response';
 import {
   PayletterPaymentsApiRequest,
   PayletterPaymentsFailureResponseDto,
@@ -129,11 +130,21 @@ export class PayletterService extends AbstractPaymentService<
       },
     });
 
+    await this.prismaService.payment.update({
+      where: {
+        id: payment.id,
+      },
+      data: {
+        onlineUrl: data.online_url,
+        mobileUrl: data.mobile_url,
+      },
+    });
+
     return {
       paymentId: payment.id,
       onlineUrl: data.online_url,
       mobileUrl: data.mobile_url,
-    };
+    } as CreatePaymentResponse;
   }
 
   cancelPayment(paymentId: string, reason?: string) {

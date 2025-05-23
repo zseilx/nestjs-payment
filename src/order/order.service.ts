@@ -6,7 +6,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Order, OrderStatus, PgProviderType } from 'generated/prisma';
+import {
+  Order,
+  OrderItem,
+  OrderStatus,
+  PgProviderType,
+  Prisma,
+} from 'generated/prisma';
 import { Decimal } from 'generated/prisma/runtime/library';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { CreatePaymentRequest } from 'src/payment/dto/create-payment.request';
@@ -14,10 +20,13 @@ import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
 import { processProductRequest } from 'src/product/dto/process-product.request';
 import { ProductService } from 'src/product/product.service';
 import { CreateOrderRequest } from './dto/create-order.request';
+import { ListOrderResponse } from './dto/list-order.response';
+import { SearchOrderRequest } from './dto/search-order.request';
 
 @Injectable()
 export class OrderService {
   private readonly logger = new Logger(OrderService.name);
+  private;
 
   constructor(
     @Inject(forwardRef(() => PaymentServiceFactory))
@@ -121,7 +130,20 @@ export class OrderService {
     }
   }
 
-  // TODO: 완성 필요
+  async findMany(request: SearchOrderRequest) {
+    const where: Prisma.OrderWhereInput = {};
+    where.userId = request.userId;
+
+    this.logger.debug(where);
+
+    return this.prismaService.fetchPaginatedResult(
+      ListOrderResponse,
+      Prisma.ModelName.Order,
+      request,
+      where,
+    );
+  }
+
   async getOrder(orderId: string) {
     return this.prismaService.order.findUnique({
       where: {
@@ -130,26 +152,27 @@ export class OrderService {
     });
   }
 
-  async retryPayment(orderId: string) {
-    const order = await this.prismaService.order.findUnique({
-      include: {
-        payment: true,
-      },
-      where: {
-        id: orderId,
-      },
-    });
+  // TODO
+  // async retryPayment(orderId: string) {
+  //   const order = await this.prismaService.order.findUnique({
+  //     include: {
+  //       payment: true,
+  //     },
+  //     where: {
+  //       id: orderId,
+  //     },
+  //   });
 
-    if (!order || !order.payment) {
-      throw new NotFoundException(
-        '주문 정보 또는 결제 정보를 찾을 수 없습니다',
-      );
-    }
+  //   if (!order || !order.payment) {
+  //     throw new NotFoundException(
+  //       '주문 정보 또는 결제 정보를 찾을 수 없습니다',
+  //     );
+  //   }
 
-    return this.paymentServiceFactory
-      .getProvider(order.payment.pgProvider as PgProviderType)
-      .getRedirectUrl(order.payment.id);
-  }
+  //   return this.paymentServiceFactory
+  //     .getProvider(order.payment.pgProvider as PgProviderType)
+  //     .getRedirectUrl(order.payment.id);
+  // }
 
   // TODO: 상세 구현
   async fulfillOrder(orderId: string, paidAmount: number | Decimal) {
@@ -168,35 +191,40 @@ export class OrderService {
       return;
     }
 
-    const order = await this.prismaService.order.update({
-      where: {
-        id: orderId,
-      },
-      include: {
-        orderItems: true,
-      },
-      data: {
-        paidAmount: paidAmount,
-        status: OrderStatus.PAID,
-      },
-    });
+    const order: Order & { orderItems: OrderItem[] } =
+      await this.prismaService.order.update({
+        where: {
+          id: orderId,
+        },
+        include: {
+          orderItems: true,
+        },
+        data: {
+          paidAmount: paidAmount,
+          status: OrderStatus.PAID,
+          paidAt: new Date(),
+        },
+      });
 
-    const products: processProductRequest[] = order.orderItems.map((item) => {
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-      };
-    });
+    const products: processProductRequest[] = order.orderItems.map(
+      (item: OrderItem) => {
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+        } as processProductRequest;
+      },
+    );
 
     // 주문 상품 지급 절차
     await this.productService.processProducts(products);
   }
 
   // TODO: 상세 구현
-  async cancelOrder(orderId: string, request: any) {
+  async cancelOrder(orderId: string) {
     const order = await this.prismaService.order.findUnique({
       include: {
         payment: true,
+        orderItems: true,
       },
       where: {
         id: orderId,
@@ -209,12 +237,14 @@ export class OrderService {
       );
     }
     // orderId를 통해 order의 진행 상태 및 환불 가능 여부 확인
+    // const checkCancelProduct = await this.productService.
 
     // 주문 상품 회수
+    // const returnProducts = await this.productService.
 
-    return this.paymentServiceFactory
+    const cancelPayment = await this.paymentServiceFactory
       .getProvider(order.payment.pgProvider as PgProviderType)
-      .cancelPayment(order.payment.id, request);
+      .cancelPayment(order.payment.id);
   }
 
   // TODO: 상세 구현

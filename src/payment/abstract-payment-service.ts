@@ -27,7 +27,7 @@ export abstract class AbstractPaymentService<
   abstract handleCallback(
     paymentId: string,
     callbackData: InstanceType<TCallbackData>,
-  ): Promise<any>;
+  ): Promise<TCallbackResponse>;
 
   abstract handleReturn(
     paymentId: string,
@@ -39,7 +39,7 @@ export abstract class AbstractPaymentService<
     cancelData: InstanceType<TCancelData>,
   ): Promise<any>;
 
-  abstract getRedirectUrl(paymentId: string): Promise<string> | string;
+  // abstract getRedirectUrl(paymentId: string): Promise<string> | string;
 
   protected abstract getCallbackDtoClass(): TCallbackData;
   protected abstract getReturnDtoClass(): TReturnData;

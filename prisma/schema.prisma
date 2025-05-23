@@ -39,6 +39,7 @@ model Order {
   paidAmount     Decimal? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
   refundedAmount Decimal? // 환불된 총 금액 (부분 환불 고려)
   paymentId      String? // 결제 ID
+  paidAt         DateTime?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
@@ -71,6 +72,8 @@ model Payment {
   method             PaymentMethod // CARD, BANK_TRANSFER, etc.
   serviceName        String
   status             PaymentStatus // INITIATED, SUCCESS, FAILED
+  onlineUrl          String? // 결제 웹 URL
+  mobileUrl          String? // 결제 모바일 URL
   paidAt             DateTime?
   successRedirectUrl String // 결제 성공 시 리다이렉트 URL
   failureRedirectUrl String // 결제 실패 시 리다이렉트 URL
@@ -88,8 +91,6 @@ model PayletterDetail {
   paymentId             String   @unique
   userId                String?
   userName              String?
-  onlineUrl             String? // 결제 웹 URL
-  mobileUrl             String? // 결제 모바일 URL
   code                  String? // 결과
   message               String? // 메시지
   tid                   String?  @unique // PG 고유 결제번호
@@ -165,8 +166,10 @@ enum PgProviderType {
 
 enum PaymentStatus {
   INITIATED
+  PENDING
   SUCCESS
   FAILED
+  CANCELLED
 }
 
 enum PaymentMethod {

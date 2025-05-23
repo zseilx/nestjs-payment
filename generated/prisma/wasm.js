@@ -143,6 +143,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   paidAmount: 'paidAmount',
   refundedAmount: 'refundedAmount',
   paymentId: 'paymentId',
+  paidAt: 'paidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -166,6 +167,8 @@ exports.Prisma.PaymentScalarFieldEnum = {
   method: 'method',
   serviceName: 'serviceName',
   status: 'status',
+  onlineUrl: 'onlineUrl',
+  mobileUrl: 'mobileUrl',
   paidAt: 'paidAt',
   successRedirectUrl: 'successRedirectUrl',
   failureRedirectUrl: 'failureRedirectUrl',
@@ -178,8 +181,6 @@ exports.Prisma.PayletterDetailScalarFieldEnum = {
   paymentId: 'paymentId',
   userId: 'userId',
   userName: 'userName',
-  onlineUrl: 'onlineUrl',
-  mobileUrl: 'mobileUrl',
   code: 'code',
   message: 'message',
   tid: 'tid',
@@ -293,8 +294,10 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   INITIATED: 'INITIATED',
+  PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.Prisma.ModelName = {

@@ -20,7 +20,7 @@ export class PaymentController {
     @Param('paymentId') paymentId: string,
     @Param('pgProvider', PgProviderPipe) pgProvider: PgProviderType,
     @Body() request: any,
-  ) {
+  ): Promise<unknown> {
     const provider = this.paymentServiceFactory.getProvider(pgProvider);
     return provider.handleCallback(
       paymentId,
