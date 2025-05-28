@@ -1,9 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDecimal,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
 } from 'class-validator';
@@ -59,7 +60,19 @@ export class CreatePaymentRequest {
   @IsDecimal()
   amount: Decimal;
 
+  @ApiProperty({
+    description: '부과세 금액',
+  })
+  @Type(() => Decimal)
+  @IsDecimal()
+  vatAmount: Decimal;
+
   @ApiProperty({ description: '결제 수단', enum: PaymentMethod })
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
+
+  @ApiPropertyOptional({ description: '영수증 발행 여부', enum: ['Y', 'N'] })
+  @IsOptional()
+  @IsEnum(['Y', 'N'])
+  receiptFlag: 'Y' | 'N' = 'N';
 }

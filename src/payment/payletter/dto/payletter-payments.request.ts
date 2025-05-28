@@ -9,16 +9,6 @@ import {
 } from 'class-validator';
 import { PayletterPGCode } from '../payletter-method.enum';
 
-export class PayletterPaymentsSuccessResponseDto {
-  token: number;
-  online_url: string;
-  mobile_url: string;
-}
-export class PayletterPaymentsFailureResponseDto {
-  code: number;
-  message: string;
-}
-
 export class PayletterPaymentsRequest {
   @ApiProperty({
     description: '결제 성공 시 redirect url',

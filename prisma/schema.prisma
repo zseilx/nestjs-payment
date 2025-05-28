@@ -18,7 +18,7 @@ model Product {
   id           String      @id @default(cuid())
   name         String // 상품 이름
   description  String? // 상품 설명
-  price        Decimal // 단가 (원 단위, VAT 포함)
+  price        Decimal // 단가 (원 단위, VAT 미포함)
   imageUrl     String?
   currency     String      @default("KRW") // 통화 단위 (기본: KRW)
   stock        Int? // 재고 수량 (재고 관리 안 하면 생략 가능)
@@ -37,9 +37,12 @@ model Order {
   totalAmount    Decimal // 주문 전체 금액 (정상가 * 수량 합)
   status         OrderStatus // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
   paidAmount     Decimal? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
+  vatAmount      Decimal? // 부가세 금액
   refundedAmount Decimal? // 환불된 총 금액 (부분 환불 고려)
   paymentId      String? // 결제 ID
   paidAt         DateTime?
+  refundableDate DateTime? // 환불 가능 일자
+  canceledAt     DateTime? // 취소 일자
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
@@ -54,7 +57,7 @@ model OrderItem {
   orderId     String
   quantity    Int
   canceledQty Int      @default(0) // 부분 취소된 수량
-  unitPrice   Decimal // 주문 당시 단가
+  unitPrice   Decimal // 주문 당시 단가 (VAT 미포함)
   productName String // 주문 당시 상품명 (캐시)
   optionName  String? // ex: "색상: 블랙 / 사이즈: L"
   createdAt   DateTime @default(now())
@@ -111,6 +114,7 @@ model PayletterDetail {
   taxfreeAmount         Decimal? // 비과세 금액
   nonsettleAmount       Decimal? // 미정산 금액
   couponAmount          Decimal? // 쿠폰 금액 (페이코만 적용)
+  receiptFlag           String? // 현금영수증 발행 여부 (Y: 발행, N: 미발행)
   receiptPossibleAmount Decimal? // 현금영수증 가능 금액
   installMonth          Int?
   // customParameter       Json

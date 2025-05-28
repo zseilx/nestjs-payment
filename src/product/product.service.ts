@@ -98,12 +98,57 @@ export class ProductService {
       const product = products.find((p) => p.id === request.productId);
       if (!product) return;
 
-      // Quantity 수량 처리 필요
-      // request.quantity
-      await this.fulfillmentHandlerFactory.getHandler(product.type).fulfill();
+      await this.fulfillmentHandlerFactory
+        .getHandler(product.type)
+        .fulfill(product.id, request.quantity);
     });
 
     // 4. 모든 이행 처리 완료 대기
     await Promise.all(fulfillmentPromises);
+  }
+
+  async refundProducts(requests: processProductRequest[]) {
+    return this.prismaService.$transaction(async (tx) => {
+      const productIds = requests.map((req) => req.productId);
+      // 1. 요청된 모든 상품 정보 조회
+      const products = await tx.product.findMany({
+        where: {
+          id: {
+            in: productIds,
+          },
+        },
+      });
+
+      if (products.length !== productIds.length) {
+        const foundIds = new Set(products.map((p) => p.id));
+        const notFoundIds = productIds.filter((id) => !foundIds.has(id));
+        throw new NotFoundException(
+          `다음 상품을 찾을 수 없습니다: ${notFoundIds.join(', ')}`,
+        );
+      }
+
+      // 2. 환불 불가능한 상품 확인
+      const nonRefundableProducts = products.filter((p) => !p.isRefundable);
+      if (nonRefundableProducts.length > 0) {
+        throw new Error(
+          `다음 상품은 환불이 불가능합니다: ${nonRefundableProducts
+            .map((p) => p.name)
+            .join(', ')}`,
+        );
+      }
+
+      // 3. 각 상품별로 환불 처리
+      const refundPromises = requests.map(async (request) => {
+        const product = products.find((p) => p.id === request.productId);
+        if (!product) return;
+
+        await this.fulfillmentHandlerFactory
+          .getHandler(product.type)
+          .refund(product.id, request.quantity);
+      });
+
+      // 4. 모든 환불 처리 완료 대기
+      await Promise.all(refundPromises);
+    });
   }
 }

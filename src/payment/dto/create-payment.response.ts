@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class CreatePaymentResponse {
   @ApiProperty({
@@ -18,4 +19,11 @@ export class CreatePaymentResponse {
     example: 'https://www.naver.com',
   })
   mobileUrl: string;
+
+  @ApiPropertyOptional({
+    description: '환불 가능 일자',
+    example: '2025-05-27T14:14:53.000Z',
+  })
+  @IsOptional()
+  refundableDate?: Date | null;
 }

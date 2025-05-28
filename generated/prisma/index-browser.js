@@ -141,9 +141,12 @@ exports.Prisma.OrderScalarFieldEnum = {
   totalAmount: 'totalAmount',
   status: 'status',
   paidAmount: 'paidAmount',
+  vatAmount: 'vatAmount',
   refundedAmount: 'refundedAmount',
   paymentId: 'paymentId',
   paidAt: 'paidAt',
+  refundableDate: 'refundableDate',
+  canceledAt: 'canceledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -201,6 +204,7 @@ exports.Prisma.PayletterDetailScalarFieldEnum = {
   taxfreeAmount: 'taxfreeAmount',
   nonsettleAmount: 'nonsettleAmount',
   couponAmount: 'couponAmount',
+  receiptFlag: 'receiptFlag',
   receiptPossibleAmount: 'receiptPossibleAmount',
   installMonth: 'installMonth',
   cashReceiptCid: 'cashReceiptCid',

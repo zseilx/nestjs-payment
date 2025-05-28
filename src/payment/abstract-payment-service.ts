@@ -1,4 +1,5 @@
 import { plainToInstance } from 'class-transformer';
+import { Decimal } from 'generated/prisma/runtime/library';
 import { CreatePaymentRequest } from './dto/create-payment.request';
 import { CreatePaymentResponse } from './dto/create-payment.response';
 
@@ -12,13 +13,16 @@ export abstract class AbstractPaymentService<
     request: CreatePaymentRequest,
   ): Promise<CreatePaymentResponse>;
 
-  abstract cancelPayment(paymentId: string, reason?: string);
+  abstract cancelPayment(
+    paymentId: string,
+    userId: string,
+  ): string | Promise<string>;
 
   abstract cancelPaymentPartial(
     paymentId: string,
-    request: any,
-    reason?: string,
-  );
+    userId: string,
+    amount: Decimal,
+  ): string | Promise<string>;
 
   abstract verifyCallback(
     callbackData: InstanceType<TCallbackData>,

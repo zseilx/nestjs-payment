@@ -10,6 +10,7 @@ import {
 import { AxiosError } from 'axios';
 import * as crypto from 'crypto';
 import { PaymentStatus, PgProviderType } from 'generated/prisma';
+import { Decimal } from 'generated/prisma/runtime/library';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from 'src/config/app-config/app-config.service';
 import { PrismaService } from 'src/config/prisma/prisma.service';
@@ -17,16 +18,17 @@ import { OrderService } from 'src/order/order.service';
 import { AbstractPaymentService } from '../abstract-payment-service';
 import { CreatePaymentRequest } from '../dto/create-payment.request';
 import { CreatePaymentResponse } from '../dto/create-payment.response';
-import {
-  PayletterPaymentsApiRequest,
-  PayletterPaymentsFailureResponseDto,
-  PayletterPaymentsSuccessResponseDto,
-} from './dto/payletter-payments.dto';
+import { PayletterCancelRequest } from './dto/payletter-cancel.request';
+import { PayletterFailureResponse } from './dto/payletter-failure-response';
+import { PayletterPartialCancelRequest } from './dto/payletter-partial-cancel.request';
+import { PayletterPaymentsSuccessResponse } from './dto/payletter-payments-success.response';
+import { PayletterPaymentsApiRequest } from './dto/payletter-payments.request';
 import {
   PayletterPaymentsCallbackSuccessResponseDto,
   PayletterPaymentsReturnSuccessResponseDto,
 } from './dto/payletter-payments.response';
 import {
+  calculateRefundableDate,
   convertPaymentMethodToPayletter,
   PayletterPGCode,
 } from './payletter-method.enum';
@@ -84,6 +86,11 @@ export class PayletterService extends AbstractPaymentService<
       },
     });
 
+    const taxAmount =
+      request.vatAmount instanceof Decimal
+        ? request.vatAmount.toNumber()
+        : null;
+
     const apiRequestData: PayletterPaymentsApiRequest = Object.assign(
       new PayletterPaymentsApiRequest(),
       {
@@ -95,14 +102,16 @@ export class PayletterService extends AbstractPaymentService<
         product_name: request.productName,
         service_name: serviceName,
         amount: request.amount.toNumber(),
+        tax_amount: taxAmount,
         pgcode: convertPaymentMethodToPayletter(request.paymentMethod),
         order_no: request.orderId,
+        receipt_flag: request.receiptFlag,
       } as Partial<PayletterPaymentsApiRequest>,
     );
 
     const { data } = await firstValueFrom(
       this.httpService
-        .request<PayletterPaymentsSuccessResponseDto>({
+        .request<PayletterPaymentsSuccessResponse>({
           method: 'POST',
           baseURL: `${this.PAYLETTER_API_URL}/v1.0/payments/request`,
           headers: {
@@ -111,15 +120,13 @@ export class PayletterService extends AbstractPaymentService<
           data: apiRequestData,
         })
         .pipe(
-          catchError(
-            (error: AxiosError<PayletterPaymentsFailureResponseDto>) => {
-              const res = error.response?.data;
-              throw new HttpException(
-                `${res?.code}: ${res?.message}`,
-                error.status || 400,
-              );
-            },
-          ),
+          catchError((error: AxiosError<PayletterFailureResponse>) => {
+            const res = error.response?.data;
+            throw new HttpException(
+              `${res?.code}: ${res?.message}`,
+              error.status || 400,
+            );
+          }),
         ),
     );
 
@@ -144,15 +151,108 @@ export class PayletterService extends AbstractPaymentService<
       paymentId: payment.id,
       onlineUrl: data.online_url,
       mobileUrl: data.mobile_url,
+      refundableDate: calculateRefundableDate(
+        convertPaymentMethodToPayletter(request.paymentMethod),
+        new Date(),
+      ),
     } as CreatePaymentResponse;
   }
 
-  cancelPayment(paymentId: string, reason?: string) {
-    // TODO: 결제 취소 구현
-    throw new Error('Method not implemented.');
+  async cancelPayment(paymentId: string, userId: string) {
+    const payment = await this.prismaService.payment.findUnique({
+      where: { id: paymentId },
+      include: {
+        payletterDetail: true,
+      },
+    });
+    if (!payment || !payment.payletterDetail) {
+      throw new NotFoundException('결제 정보를 찾을 수 없습니다');
+    }
+
+    const { data } = await firstValueFrom(
+      this.httpService
+        .request<PayletterPaymentsSuccessResponse>({
+          method: 'POST',
+          baseURL: `${this.PAYLETTER_API_URL}/v1.0/payments/cancel`,
+          headers: {
+            Authorization: `PLKEY ${this.PAYLETTER_API_KEY}`,
+          },
+          data: {
+            pgcode: payment.payletterDetail.pgcode,
+            client_id: this.PAYLETTER_ID,
+            user_id: userId,
+            tid: payment.payletterDetail.tid,
+            ip_addr: '127.0.0.1', // TODO: 실제 IP 주소로 변경
+          } as PayletterCancelRequest,
+        })
+        .pipe(
+          catchError((error: AxiosError<PayletterFailureResponse>) => {
+            const res = error.response?.data;
+            throw new HttpException(
+              `${res?.code}: ${res?.message}`,
+              error.status || 400,
+            );
+          }),
+        ),
+    );
+
+    // const data = await this.prismaService.payletterDetail.update({
+    //   where: {
+    //     paymentId,
+    //   },
+    //   data: {
+    //     ...data.getCamelCase(),
+    //   },
+    // });
+
+    return 'success';
   }
 
-  cancelPaymentPartial(paymentId: string, request: any, reason?: string) {}
+  async cancelPaymentPartial(
+    paymentId: string,
+    userId: string,
+    amount: Decimal,
+  ) {
+    const payment = await this.prismaService.payment.findUnique({
+      where: { id: paymentId },
+      include: {
+        payletterDetail: true,
+      },
+    });
+    if (!payment || !payment.payletterDetail) {
+      throw new NotFoundException('결제 정보를 찾을 수 없습니다');
+    }
+
+    const { data } = await firstValueFrom(
+      this.httpService
+        .request<PayletterPaymentsSuccessResponse>({
+          method: 'POST',
+          baseURL: `${this.PAYLETTER_API_URL}/v1.0/payments/cancel/partial`,
+          headers: {
+            Authorization: `PLKEY ${this.PAYLETTER_API_KEY}`,
+          },
+          data: {
+            pgcode: payment.payletterDetail.pgcode,
+            client_id: this.PAYLETTER_ID,
+            user_id: userId,
+            tid: payment.payletterDetail.tid,
+            amount: amount.toNumber(),
+            ip_addr: '127.0.0.1', // TODO: 실제 IP 주소로 변경
+          } as PayletterPartialCancelRequest,
+        })
+        .pipe(
+          catchError((error: AxiosError<PayletterFailureResponse>) => {
+            const res = error.response?.data;
+            throw new HttpException(
+              `${res?.code}: ${res?.message}`,
+              error.status || 400,
+            );
+          }),
+        ),
+    );
+
+    return 'success';
+  }
 
   private generatePayhash(
     userId: string,

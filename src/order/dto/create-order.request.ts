@@ -25,7 +25,10 @@ class OrderItemInput {
 }
 
 export class CreateOrderRequest {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: '사용자 ID',
+    example: 'test',
+  })
   @IsOptional()
   @IsString()
   userId: string;
@@ -63,15 +66,30 @@ export class CreateOrderRequest {
     description: '주문 상품 목록',
     type: OrderItemInput,
     isArray: true,
+    example: [
+      {
+        productId: 'cmaz4jvh10000yazyy2gzkxkp',
+        quantity: 50,
+      },
+    ],
   })
   @IsNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItemInput)
-  items: OrderItemInput[];
+  orderItems: OrderItemInput[];
 
-  @ApiProperty({ description: '결제 수단', enum: PaymentMethod })
+  @ApiProperty({
+    description: '결제 수단',
+    enum: PaymentMethod,
+    example: PaymentMethod.KAKAO_PAY,
+  })
   @IsNotEmpty()
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
+
+  @ApiPropertyOptional({ description: '영수증 발행 여부', enum: ['Y', 'N'] })
+  @IsOptional()
+  @IsEnum(['Y', 'N'])
+  receiptFlag: 'Y' | 'N' = 'N';
 }

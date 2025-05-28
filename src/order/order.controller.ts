@@ -8,6 +8,8 @@ import {
 } from '@nestjs/swagger';
 import { ApiOkPaginatedResponse } from 'src/config/method.decorator';
 import { CreatePaymentResponse } from 'src/payment/dto/create-payment.response';
+import { CancelOrderPartialRequest } from './dto/cancel-order-partial.request';
+import { CancelOrderRequest } from './dto/cancel-order.request';
 import { CreateOrderRequest } from './dto/create-order.request';
 import { ListOrderResponse } from './dto/list-order.response';
 import { SearchOrderRequest } from './dto/search-order.request';
@@ -74,24 +76,30 @@ export class OrderController {
 
   @ApiOperation({ summary: '주문 취소' })
   @Post(':orderId/cancel')
-  async cancelOrder(@Param('orderId') orderId: string) {
+  async cancelOrder(
+    @Param('orderId') orderId: string,
+    @Body() request: CancelOrderRequest,
+  ) {
     const user = {
       id: 'test',
       role: 'USER',
     };
 
-    return this.orderService.cancelOrder(orderId);
+    return this.orderService.cancelOrder(orderId, request);
     // 결제 전 주문 취소
   }
 
-  // @ApiOperation({ summary: '주문 부분 취소' })
-  // @Post(':orderId/cancel/partial')
-  // async cancelOrderPartial(@Param('orderId') orderId: string) {
-  //   const user = {
-  //     id: 'test',
-  //     role: 'USER',
-  //   };
+  @ApiOperation({ summary: '주문 부분 취소' })
+  @Post(':orderId/cancel/partial')
+  async cancelOrderPartial(
+    @Param('orderId') orderId: string,
+    @Body() request: CancelOrderPartialRequest,
+  ) {
+    const user = {
+      id: 'test',
+      role: 'USER',
+    };
 
-  //   return this.orderService.cancelOrderPartial(orderId, {});
-  // }
+    return this.orderService.cancelOrderPartial(orderId, request);
+  }
 }

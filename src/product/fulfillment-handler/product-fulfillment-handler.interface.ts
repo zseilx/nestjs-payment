@@ -1,3 +1,4 @@
 export interface ProductFulfillmentHandler {
-  fulfill(): Promise<void>;
+  fulfill(productId: string, quantity: number): Promise<void>;
+  refund(productId: string, quantity: number): Promise<void>;
 }
