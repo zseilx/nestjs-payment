@@ -1,14 +1,14 @@
 -- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'PARTIALLY_CANCELED', 'CANCELED');
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'PARTIALLY_CANCELED', 'CANCELED', 'FAILED');
 
 -- CreateEnum
 CREATE TYPE "PgProviderType" AS ENUM ('PAYLETTER');
 
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('INITIATED', 'SUCCESS', 'FAILED');
+CREATE TYPE "PaymentStatus" AS ENUM ('INITIATED', 'PENDING', 'SUCCESS', 'FAILED', 'CANCELLED');
 
 -- CreateEnum
-CREATE TYPE "PaymentMethod" AS ENUM ('CARD', 'BANK_TRANSFER', 'VIRTUAL_ACCOUNT', 'MOBILE', 'POINT', 'VOUCHER', 'OTHER');
+CREATE TYPE "PaymentMethod" AS ENUM ('CARD', 'BANK_TRANSFER', 'VIRTUAL_ACCOUNT', 'MOBILE', 'POINT', 'VOUCHER', 'BOOK', 'CULTURE', 'SMART_CULTURE', 'HAPPY_MONEY', 'MOBILE_POP', 'TEEN_CASH', 'T_MONEY', 'CVS', 'EGG_MONEY', 'ON_CASH', 'PHONE_BILL', 'CASH_BEE', 'KAKAO_PAY', 'PAYCO', 'CHECK_PAY', 'TOSS', 'SSG_PAY', 'NAVER_PAY', 'SAMSUNG_PAY', 'APPLE_PAY', 'OTHER');
 
 -- CreateEnum
 CREATE TYPE "ProductType" AS ENUM ('CREDIT');
@@ -18,7 +18,7 @@ CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "price" INTEGER NOT NULL,
+    "price" DECIMAL(65,30) NOT NULL,
     "imageUrl" TEXT,
     "currency" TEXT NOT NULL DEFAULT 'KRW',
     "stock" INTEGER,
@@ -38,8 +38,12 @@ CREATE TABLE "Order" (
     "totalAmount" DECIMAL(65,30) NOT NULL,
     "status" "OrderStatus" NOT NULL,
     "paidAmount" DECIMAL(65,30),
+    "vatAmount" DECIMAL(65,30),
     "refundedAmount" DECIMAL(65,30),
     "paymentId" TEXT,
+    "paidAt" TIMESTAMP(3),
+    "refundableDate" TIMESTAMP(3),
+    "canceledAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -69,7 +73,12 @@ CREATE TABLE "Payment" (
     "method" "PaymentMethod" NOT NULL,
     "serviceName" TEXT NOT NULL,
     "status" "PaymentStatus" NOT NULL,
+    "onlineUrl" TEXT,
+    "mobileUrl" TEXT,
     "paidAt" TIMESTAMP(3),
+    "successRedirectUrl" TEXT NOT NULL,
+    "failureRedirectUrl" TEXT NOT NULL,
+    "cancelRedirectUrl" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
@@ -79,8 +88,8 @@ CREATE TABLE "Payment" (
 CREATE TABLE "PayletterDetail" (
     "id" TEXT NOT NULL,
     "paymentId" TEXT NOT NULL,
-    "onlineUrl" TEXT,
-    "mobileUrl" TEXT,
+    "userId" TEXT,
+    "userName" TEXT,
     "code" TEXT,
     "message" TEXT,
     "tid" TEXT,
@@ -95,27 +104,30 @@ CREATE TABLE "PayletterDetail" (
     "domesticFlag" TEXT,
     "billkey" TEXT,
     "cardInfo" TEXT,
-    "disposableCupDeposit" INTEGER,
-    "taxAmount" INTEGER,
-    "taxfreeAmount" INTEGER,
-    "nonsettleAmount" INTEGER,
-    "couponAmount" INTEGER,
-    "receiptPossibleAmount" INTEGER,
-    "cashReceiptCode" TEXT,
-    "cashReceiptMessage" TEXT,
+    "disposableCupDeposit" DECIMAL(65,30),
+    "amount" DECIMAL(65,30),
+    "taxAmount" DECIMAL(65,30),
+    "taxfreeAmount" DECIMAL(65,30),
+    "nonsettleAmount" DECIMAL(65,30),
+    "couponAmount" DECIMAL(65,30),
+    "receiptFlag" TEXT,
+    "receiptPossibleAmount" DECIMAL(65,30),
+    "installMonth" INTEGER,
     "cashReceiptCid" TEXT,
+    "cashReceiptCode" TEXT,
     "cashReceiptDealNo" TEXT,
     "cashReceiptIssueType" TEXT,
+    "cashReceiptMessage" TEXT,
     "cashReceiptPayerSid" TEXT,
     "cashReceiptType" TEXT,
-    "account_no" TEXT,
-    "account_name" TEXT,
-    "account_holder" TEXT,
-    "bank_code" TEXT,
-    "bank_name" TEXT,
-    "issue_tid" TEXT,
-    "expire_date" TEXT,
-    "expire_time" TEXT,
+    "accountNo" TEXT,
+    "accountName" TEXT,
+    "accountHolder" TEXT,
+    "bankCode" TEXT,
+    "bankName" TEXT,
+    "issueTid" TEXT,
+    "expireDate" TEXT,
+    "expireTime" TEXT,
     "transactionDate" TIMESTAMP(3),
 
     CONSTRAINT "PayletterDetail_pkey" PRIMARY KEY ("id")
@@ -128,7 +140,7 @@ CREATE TABLE "Refund" (
     "orderId" TEXT,
     "orderItemId" TEXT,
     "reason" TEXT,
-    "amount" INTEGER NOT NULL,
+    "amount" DECIMAL(65,30) NOT NULL,
     "quantity" INTEGER,
     "refundedAt" TIMESTAMP(3),
 
