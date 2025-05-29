@@ -1,30 +1,29 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import { ApiOkPaginatedResponse } from 'src/config/method.decorator';
-import { CreatePaymentResponse } from 'src/payment/dto/create-payment.response';
 import { CancelOrderPartialRequest } from './dto/cancel-order-partial.request';
-import { CancelOrderRequest } from './dto/cancel-order.request';
 import { CreateOrderRequest } from './dto/create-order.request';
+import { DetailOrderResponse } from './dto/detail-order.response';
 import { ListOrderResponse } from './dto/list-order.response';
 import { SearchOrderRequest } from './dto/search-order.request';
+import { UpdateOrderRequest } from './dto/update-order.request';
 import { OrderService } from './order.service';
 
 @ApiTags('주문')
-@ApiExtraModels(CreateOrderRequest, CreatePaymentResponse, ListOrderResponse)
+@ApiExtraModels(CreateOrderRequest, ListOrderResponse)
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @ApiOkResponse({
-    schema: { $ref: getSchemaPath(CreatePaymentResponse) },
+  @ApiOperation({
+    summary: '주문 생성',
+    description: '주문만 생성합니다. 결제는 별도 API를 사용하세요.',
   })
-  @ApiOperation({ summary: '주문 생성' })
   @Post()
   async createOrder(@Body() request: CreateOrderRequest) {
     const user = {
@@ -52,41 +51,36 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: '주문 상세 조회' })
+  @ApiOkResponse({ type: DetailOrderResponse })
   @Get(':orderId')
   async getOrder(@Param('orderId') orderId: string) {
-    const user = {
-      id: 'test',
-      role: 'USER',
-    };
-
     return this.orderService.getOrder(orderId);
   }
 
-  // @ApiOperation({ summary: '주문 결제 재시도' })
-  // @Post(':orderId/retry-payment')
-  // async retryPayment(@Param('orderId') orderId: string) {
-  //   const user = {
-  //     id: 'test',
-  //     role: 'USER',
-  //   };
-
-  //   return this.orderService.retryPayment(orderId);
-  //   // 결제 재요청
-  // }
-
-  @ApiOperation({ summary: '주문 취소' })
-  @Post(':orderId/cancel')
-  async cancelOrder(
+  @ApiOperation({
+    summary: '주문 수정',
+    description: '결제 대기 중인 주문의 상품/수량을 수정합니다.',
+  })
+  @ApiOkResponse({ type: DetailOrderResponse })
+  @Put(':orderId')
+  async updateOrder(
     @Param('orderId') orderId: string,
-    @Body() request: CancelOrderRequest,
+    @Body() request: UpdateOrderRequest,
   ) {
     const user = {
       id: 'test',
       role: 'USER',
     };
 
-    return this.orderService.cancelOrder(orderId, request);
-    // 결제 전 주문 취소
+    request.userId = user.id;
+
+    return this.orderService.updateOrder(orderId, request);
+  }
+
+  @ApiOperation({ summary: '주문 취소' })
+  @Post(':orderId/cancel')
+  async cancelOrder(@Param('orderId') orderId: string) {
+    return this.orderService.cancelOrder(orderId);
   }
 
   @ApiOperation({ summary: '주문 부분 취소' })
@@ -95,11 +89,6 @@ export class OrderController {
     @Param('orderId') orderId: string,
     @Body() request: CancelOrderPartialRequest,
   ) {
-    const user = {
-      id: 'test',
-      role: 'USER',
-    };
-
     return this.orderService.cancelOrderPartial(orderId, request);
   }
 }

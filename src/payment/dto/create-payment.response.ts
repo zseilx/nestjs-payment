@@ -3,6 +3,18 @@ import { IsOptional } from 'class-validator';
 
 export class CreatePaymentResponse {
   @ApiProperty({
+    description: 'PG사 구분',
+    example: 'PAYLETTER',
+  })
+  pgProviderType: string;
+
+  @ApiProperty({
+    description: '결제 수단',
+    example: 'KAKAO_PAY',
+  })
+  paymentMethod: string;
+
+  @ApiProperty({
     description: '결제 아이디',
     example: '1234567890',
   })

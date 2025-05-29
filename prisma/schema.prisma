@@ -25,6 +25,7 @@ model Product {
   type         ProductType
   isActive     Boolean     @default(true) // 판매 중지 여부
   isRefundable Boolean     @default(true) // 환불 가능 여부
+  vatRate      Float       @default(0.1) // 부가세 비율 (0.1=10%, 0=면세, 0.05=5% 등)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -38,7 +39,7 @@ model Order {
   status         OrderStatus // PENDING, PAID, CANCELED, PARTIALLY_CANCELED 등
   paidAmount     Decimal? // 실제 결제된 금액 (쿠폰, 포인트, 부분결제 반영)
   vatAmount      Decimal? // 부가세 금액
-  refundedAmount Decimal? // 환불된 총 금액 (부분 환불 고려)
+  refundedAmount Decimal? // 환불된 총 금액 (부가세 포함, 부분 환불 고려)
   paymentId      String? // 결제 ID
   paidAt         DateTime?
   refundableDate DateTime? // 환불 가능 일자
@@ -60,6 +61,8 @@ model OrderItem {
   unitPrice   Decimal // 주문 당시 단가 (VAT 미포함)
   productName String // 주문 당시 상품명 (캐시)
   optionName  String? // ex: "색상: 블랙 / 사이즈: L"
+  vatRate     Float // 주문 당시 부가세 비율 (이력 보존)
+  vatAmount   Decimal // 부가세 금액
   createdAt   DateTime @default(now())
 
   // payment      Payment?  @relation(fields: [paymentId], references: [id])

@@ -7,6 +7,8 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
 import { ProductType } from 'generated/prisma';
 import { Decimal } from 'generated/prisma/runtime/library';
@@ -30,7 +32,7 @@ export class CreateProductRequest {
   description?: string;
 
   @ApiProperty({
-    description: '상품 가격 (원 단위, VAT 포함)',
+    description: '상품 가격 (원 단위, VAT 미포함)',
     example: 10000,
   })
   @Type(() => Decimal)
@@ -78,4 +80,16 @@ export class CreateProductRequest {
   })
   @IsBoolean()
   isRefundable: boolean;
+
+  @ApiProperty({
+    description: '부가세 비율 (0.1=10%, 0=면세, 0.05=5% 등)',
+    example: 0.1,
+    default: 0.1,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  vatRate?: number;
 }

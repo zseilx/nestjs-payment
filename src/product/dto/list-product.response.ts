@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ProductType } from 'generated/prisma';
+import { Decimal } from 'generated/prisma/runtime/library';
 
 export class ListProductResponse {
   @ApiProperty({
@@ -23,11 +24,11 @@ export class ListProductResponse {
   description: string | null;
 
   @ApiProperty({
-    description: '상품 가격 (원 단위, VAT 포함)',
+    description: '상품 가격 (원 단위, VAT 미포함)',
     example: 10000,
   })
-  @Type(() => Number)
-  price: number;
+  @Type(() => Decimal)
+  price: Decimal;
 
   @ApiProperty({
     description: '상품 이미지 URL',
@@ -67,6 +68,21 @@ export class ListProductResponse {
     example: true,
   })
   isRefundable: boolean;
+
+  @ApiProperty({
+    description: '부가세 비율 (0.1=10%, 0=면세, 0.05=5% 등)',
+    example: 0.1,
+  })
+  vatRate: number;
+
+  @ApiProperty({
+    description: 'VAT 포함 가격 (원 단위)',
+    example: 11000,
+  })
+  @Type(() => Decimal)
+  get priceIncludingVat(): Decimal {
+    return new Decimal(this.price).mul(new Decimal(1).add(this.vatRate));
+  }
 
   @ApiProperty({
     description: '생성일',

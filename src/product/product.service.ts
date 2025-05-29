@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Prisma, Product } from 'generated/prisma';
+import { Decimal } from 'generated/prisma/runtime/library';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { CreateProductRequest } from './dto/create-product.request';
 import { DetailProductResponse } from './dto/detail-product.response';
@@ -17,9 +18,31 @@ export class ProductService {
     private readonly fulfillmentHandlerFactory: ProductFulfillmentHandlerFactory,
   ) {}
 
+  /**
+   * VAT 포함 가격 계산
+   */
+  calculatePriceIncludingVat(price: Decimal, vatRate: number): Decimal {
+    return price.mul(new Decimal(1).add(vatRate));
+  }
+
+  /**
+   * VAT 미포함 가격 계산 (VAT 포함 가격에서 역산)
+   */
+  calculatePriceExcludingVat(
+    priceIncludingVat: Decimal,
+    vatRate: number,
+  ): Decimal {
+    return priceIncludingVat.div(new Decimal(1).add(vatRate));
+  }
+
   async create(request: CreateProductRequest) {
+    const productData = {
+      ...request,
+      vatRate: request.vatRate ?? 0.1, // 기본 부가세율 10%
+    };
+
     const product = await this.prismaService.product.create({
-      data: { ...request },
+      data: productData,
     });
 
     return plainToInstance(DetailProductResponse, product);

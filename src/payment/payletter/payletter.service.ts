@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import {
+  BadRequestException,
   forwardRef,
   HttpException,
   Inject,
@@ -15,9 +16,13 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from 'src/config/app-config/app-config.service';
 import { PrismaService } from 'src/config/prisma/prisma.service';
 import { OrderService } from 'src/order/order.service';
-import { AbstractPaymentService } from '../abstract-payment-service';
-import { CreatePaymentRequest } from '../dto/create-payment.request';
-import { CreatePaymentResponse } from '../dto/create-payment.response';
+import { ServerInitiatedPaymentRequestDto } from '../dto/server-initiated-payment.request';
+import {
+  PaymentFlowType,
+  ServerInitiatedPaymentRequest,
+  ServerInitiatedPaymentResponse,
+} from '../interfaces/payment-service.interface';
+import { ServerInitiatedPaymentService } from '../interfaces/server-initiated-payment.service';
 import { PayletterCancelRequest } from './dto/payletter-cancel.request';
 import { PayletterFailureResponse } from './dto/payletter-failure-response';
 import { PayletterPartialCancelRequest } from './dto/payletter-partial-cancel.request';
@@ -34,7 +39,7 @@ import {
 } from './payletter-method.enum';
 
 @Injectable()
-export class PayletterService extends AbstractPaymentService<
+export class PayletterService extends ServerInitiatedPaymentService<
   typeof PayletterPaymentsCallbackSuccessResponseDto,
   typeof PayletterPaymentsReturnSuccessResponseDto,
   typeof Object
@@ -71,24 +76,53 @@ export class PayletterService extends AbstractPaymentService<
     return Object;
   }
 
-  async requestPayment(request: CreatePaymentRequest) {
+  getPaymentFlowType(): PaymentFlowType {
+    return PaymentFlowType.SERVER_INITIATED;
+  }
+
+  async requestPayment(
+    request: ServerInitiatedPaymentRequestDto,
+  ): Promise<ServerInitiatedPaymentResponse> {
+    // 주문 정보 조회 및 검증
+    const order = await this.orderService.getOrder(request.orderId);
+    if (!order) {
+      throw new NotFoundException('주문을 찾을 수 없습니다.');
+    }
+
+    if (order.userId !== request.userId) {
+      throw new BadRequestException('주문자가 일치하지 않습니다.');
+    }
+
+    if (order.status !== 'PENDING') {
+      throw new BadRequestException('결제 가능한 주문이 아닙니다.');
+    }
+
+    // 서버에서 검증된 금액으로 내부 요청 생성
+    const validatedRequest: ServerInitiatedPaymentRequest = {
+      ...request,
+      amount: new Decimal(order.totalAmount),
+      vatAmount: order.vatAmount
+        ? new Decimal(order.vatAmount)
+        : new Decimal(0),
+    };
+
     const serviceName = '페이먼트 서비스';
     const payment = await this.prismaService.payment.create({
       data: {
         pgProvider: PgProviderType.PAYLETTER,
-        amount: request.amount,
+        amount: validatedRequest.amount,
         status: 'INITIATED',
         method: 'CARD',
         serviceName: serviceName,
-        successRedirectUrl: request.successRedirectUrl,
-        failureRedirectUrl: request.failureRedirectUrl,
-        cancelRedirectUrl: request.cancelRedirectUrl,
+        successRedirectUrl: validatedRequest.successRedirectUrl,
+        failureRedirectUrl: validatedRequest.failureRedirectUrl,
+        cancelRedirectUrl: validatedRequest.cancelRedirectUrl,
       },
     });
 
     const taxAmount =
-      request.vatAmount instanceof Decimal
-        ? request.vatAmount.toNumber()
+      validatedRequest.vatAmount instanceof Decimal
+        ? validatedRequest.vatAmount.toNumber()
         : null;
 
     const apiRequestData: PayletterPaymentsApiRequest = Object.assign(
@@ -98,14 +132,16 @@ export class PayletterService extends AbstractPaymentService<
         return_url: `${this.SERVER_HOST}/payments/${payment.id}/return/payletter`,
         callback_url: `${this.SERVER_HOST}/payments/${payment.id}/callback/payletter`,
         cancel_url: `${this.SERVER_HOST}/payments/${payment.id}/cancel/payletter`,
-        user_id: request.userId,
-        product_name: request.productName,
+        user_id: validatedRequest.userId,
+        product_name: validatedRequest.productName,
         service_name: serviceName,
-        amount: request.amount.toNumber(),
+        amount: validatedRequest.amount.toNumber(),
         tax_amount: taxAmount,
-        pgcode: convertPaymentMethodToPayletter(request.paymentMethod),
-        order_no: request.orderId,
-        receipt_flag: request.receiptFlag,
+        pgcode: convertPaymentMethodToPayletter(
+          validatedRequest.paymentMethod as any,
+        ),
+        order_no: validatedRequest.orderId,
+        receipt_flag: validatedRequest.receiptFlag || 'N',
       } as Partial<PayletterPaymentsApiRequest>,
     );
 
@@ -151,11 +187,14 @@ export class PayletterService extends AbstractPaymentService<
       paymentId: payment.id,
       onlineUrl: data.online_url,
       mobileUrl: data.mobile_url,
-      refundableDate: calculateRefundableDate(
-        convertPaymentMethodToPayletter(request.paymentMethod),
-        new Date(),
-      ),
-    } as CreatePaymentResponse;
+      refundableDate:
+        calculateRefundableDate(
+          convertPaymentMethodToPayletter(
+            validatedRequest.paymentMethod as any,
+          ),
+          new Date(),
+        ) || undefined,
+    };
   }
 
   async cancelPayment(paymentId: string, userId: string) {
@@ -196,14 +235,14 @@ export class PayletterService extends AbstractPaymentService<
         ),
     );
 
-    // const data = await this.prismaService.payletterDetail.update({
-    //   where: {
-    //     paymentId,
-    //   },
-    //   data: {
-    //     ...data.getCamelCase(),
-    //   },
-    // });
+    await this.prismaService.payletterDetail.update({
+      where: {
+        paymentId,
+      },
+      data: {
+        // 취소 처리 완료 - 필요시 특정 필드만 업데이트
+      },
+    });
 
     return 'success';
   }
@@ -223,7 +262,7 @@ export class PayletterService extends AbstractPaymentService<
       throw new NotFoundException('결제 정보를 찾을 수 없습니다');
     }
 
-    const { data } = await firstValueFrom(
+    await firstValueFrom(
       this.httpService
         .request<PayletterPaymentsSuccessResponse>({
           method: 'POST',
@@ -389,9 +428,10 @@ export class PayletterService extends AbstractPaymentService<
 
   async handleCancel(paymentId: string, cancelData: any): Promise<any> {
     this.logger.debug(cancelData);
+    await Promise.resolve(); // Make it async
   }
 
-  getRedirectUrl(paymentId: string) {
+  getRedirectUrl() {
     return '';
   }
 }

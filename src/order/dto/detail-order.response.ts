@@ -49,8 +49,8 @@ export class OrderItemDetailResponse {
   canceledQty: number;
 
   @ApiProperty({
-    description: '주문 당시 상품 단가',
-    example: '10000',
+    description: '주문 당시 상품 단가 (VAT 미포함)',
+    example: 10000,
   })
   @Type(() => Number)
   unitPrice: number;
@@ -73,6 +73,20 @@ export class OrderItemDetailResponse {
   optionName?: string;
 
   @ApiProperty({
+    description: '주문 당시 부가세 비율',
+    example: 0.1,
+  })
+  @Type(() => Number)
+  vatRate: number;
+
+  @ApiProperty({
+    description: '부가세 금액',
+    example: 1000,
+  })
+  @Type(() => Number)
+  vatAmount: number;
+
+  @ApiProperty({
     description: '생성일시',
     example: '2024-03-20T12:00:00Z',
   })
@@ -87,7 +101,7 @@ export class DetailOrderResponse {
   @ApiProperty({ description: '주문자 ID' })
   userId: string;
 
-  @ApiProperty({ description: '주문 전체 금액 (정상가 * 수량 합)' })
+  @ApiProperty({ description: '주문 전체 금액 (VAT 포함)' })
   @Type(() => Number)
   totalAmount: number;
 
@@ -106,7 +120,7 @@ export class DetailOrderResponse {
   paidAmount?: number | null;
 
   @ApiProperty({
-    description: '부가세 금액',
+    description: '총 부가세 금액',
     nullable: true,
   })
   @Type(() => Number)

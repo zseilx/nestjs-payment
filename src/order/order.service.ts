@@ -17,7 +17,6 @@ import {
 } from 'generated/prisma';
 import { Decimal } from 'generated/prisma/runtime/library';
 import { PrismaService } from 'src/config/prisma/prisma.service';
-import { CreatePaymentRequest } from 'src/payment/dto/create-payment.request';
 import { PaymentServiceFactory } from 'src/payment/payment-service.factory';
 import { processProductRequest } from 'src/product/dto/process-product.request';
 import { ProductService } from 'src/product/product.service';
@@ -25,11 +24,11 @@ import {
   CancelOrderPartialItemRequest,
   CancelOrderPartialRequest,
 } from './dto/cancel-order-partial.request';
-import { CancelOrderRequest } from './dto/cancel-order.request';
 import { CreateOrderRequest } from './dto/create-order.request';
 import { DetailOrderResponse } from './dto/detail-order.response';
 import { ListOrderResponse } from './dto/list-order.response';
 import { SearchOrderRequest } from './dto/search-order.request';
+import { UpdateOrderRequest } from './dto/update-order.request';
 
 @Injectable()
 export class OrderService {
@@ -43,14 +42,10 @@ export class OrderService {
     private readonly productService: ProductService,
   ) {}
 
-  // TODO: 상세 구현
+  // 주문만 생성 (결제는 별도 처리)
   async createOrder(request: CreateOrderRequest) {
     const productIds = request.orderItems.map((item) => item.productId);
-
-    // 2. 중복 제거 (선택 사항)
     const uniqueProductIds = [...new Set(productIds)];
-
-    // 3. 한 번에 상품 조회
     const products = await this.productService.findManyByIds(uniqueProductIds);
 
     if (products.length !== uniqueProductIds.length) {
@@ -61,98 +56,74 @@ export class OrderService {
       );
     }
 
-    // 주문 금액 계산 및 요약 정보 구성
+    // 주문 금액 및 부가세 계산
     const orderItems = request.orderItems.map((item) => {
       const product = products.find((p) => p.id === item.productId);
       if (!product)
         throw new NotFoundException(
           `상품 ${item.productId}을 찾을 수 없습니다`,
         );
-      const totalPrice = new Decimal(product.price).mul(item.quantity);
+
+      const unitPriceDecimal = new Decimal(product.price);
+      const quantity = item.quantity;
+      const subtotal = unitPriceDecimal.mul(quantity);
+
+      // 상품별 부가세 계산
+      const vatRate = product.vatRate;
+      const vatAmount = subtotal.mul(vatRate);
+
+      const totalPrice = subtotal.add(vatAmount);
+
       return {
         productId: product.id,
         name: product.name,
         unitPrice: product.price,
         quantity: item.quantity,
-        totalPrice,
+        subtotal, // VAT 미포함 금액
+        vatRate,
+        vatAmount,
+        totalPrice, // VAT 포함 금액
       };
     });
 
-    const totalAmount = orderItems.reduce(
-      (sum, item) => sum.add(item.totalPrice),
+    const totalSubtotal = orderItems.reduce(
+      (sum, item) => sum.add(item.subtotal),
       new Decimal(0),
     );
 
-    // 부가세 계산
-    const vatAmount: Decimal = totalAmount.mul(this.VAT_RATE);
-    const totalAmountWithVat: Decimal = totalAmount.add(vatAmount);
+    const totalVatAmount = orderItems.reduce(
+      (sum, item) => sum.add(item.vatAmount),
+      new Decimal(0),
+    );
 
-    const mostExpensive = orderItems.reduce((max, item) => {
-      return item.unitPrice > max.unitPrice ? item : max;
-    }, orderItems[0]);
+    const totalAmount = totalSubtotal.add(totalVatAmount);
 
-    const summaryTitle =
-      orderItems.length === 1
-        ? `${mostExpensive.name} ${mostExpensive.quantity}개`
-        : `${mostExpensive.name} ${mostExpensive.quantity}개 외 ${orderItems.length - 1}건`;
-
-    let order: Order | null = null;
-    try {
-      order = await this.prismaService.order.create({
-        data: {
-          userId: request.userId,
-          status: OrderStatus.PENDING,
-          totalAmount: totalAmountWithVat,
-          vatAmount,
-        },
-      });
-
-      const paymentResponse = await this.paymentServiceFactory
-        .getProvider(request.pg)
-        .requestPayment({
-          successRedirectUrl: request.successRedirectUrl,
-          failureRedirectUrl: request.successRedirectUrl,
-          cancelRedirectUrl: request.cancelRedirectUrl,
-          userId: request.userId,
-          amount: totalAmountWithVat,
-          vatAmount,
-          productName: summaryTitle,
-          paymentMethod: request.paymentMethod,
-          orderId: order.id,
-          receiptFlag: request.receiptFlag,
-        } as CreatePaymentRequest);
-
-      await this.prismaService.order.update({
-        where: {
-          id: order.id,
-        },
-        data: {
-          paymentId: paymentResponse.paymentId,
-          refundableDate: paymentResponse.refundableDate,
-          orderItems: {
-            createMany: {
-              data: orderItems.map((item) => ({
-                productName: item.name,
-                productId: item.productId,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-              })),
-            },
+    // 주문만 생성 (결제 정보 없이)
+    const order = await this.prismaService.order.create({
+      data: {
+        userId: request.userId,
+        status: OrderStatus.PENDING,
+        totalAmount: totalAmount,
+        vatAmount: totalVatAmount,
+        orderItems: {
+          createMany: {
+            data: orderItems.map((item) => ({
+              productName: item.name,
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              vatRate: item.vatRate,
+              vatAmount: item.vatAmount,
+            })),
           },
         },
-      });
+      },
+      include: {
+        orderItems: true,
+      },
+    });
 
-      return paymentResponse;
-    } catch (err) {
-      this.logger.error(err);
-      if (order?.id) {
-        await this.prismaService.order.update({
-          where: { id: order.id },
-          data: { status: OrderStatus.FAILED },
-        });
-      }
-      throw err;
-    }
+    return plainToInstance(DetailOrderResponse, order);
   }
 
   async findMany(request: SearchOrderRequest) {
@@ -179,30 +150,13 @@ export class OrderService {
       },
     });
 
+    if (!order) {
+      return null;
+    }
+
+    // Decimal 값들을 안전하게 number로 변환
     return plainToInstance(DetailOrderResponse, order);
   }
-
-  // TODO
-  // async retryPayment(orderId: string) {
-  //   const order = await this.prismaService.order.findUnique({
-  //     include: {
-  //       payment: true,
-  //     },
-  //     where: {
-  //       id: orderId,
-  //     },
-  //   });
-
-  //   if (!order || !order.payment) {
-  //     throw new NotFoundException(
-  //       '주문 정보 또는 결제 정보를 찾을 수 없습니다',
-  //     );
-  //   }
-
-  //   return this.paymentServiceFactory
-  //     .getProvider(order.payment.pgProvider as PgProviderType)
-  //     .getRedirectUrl(order.payment.id);
-  // }
 
   async fulfillOrder(orderId: string, paidAmount: number | Decimal) {
     const checkOrder = await this.prismaService.order.findUnique({
@@ -248,7 +202,7 @@ export class OrderService {
     await this.productService.processProducts(products);
   }
 
-  async cancelOrder(orderId: string, request: CancelOrderRequest) {
+  async cancelOrder(orderId: string) {
     const order = await this.prismaService.order.findUnique({
       where: { id: orderId, status: OrderStatus.PAID },
       include: {
@@ -282,7 +236,7 @@ export class OrderService {
       })),
     );
 
-    const cancelPayment = await this.paymentServiceFactory
+    await this.paymentServiceFactory
       .getProvider(order.payment.pgProvider as PgProviderType)
       .cancelPayment(order.payment.id, order.userId);
 
@@ -347,16 +301,22 @@ export class OrderService {
 
     // 2. 환불 금액 계산 (부가세 포함)
     const refundAmount = refundItems.reduce((sum, item) => {
-      const itemAmount = new Decimal(item.unitPrice).mul(item.quantity);
-      return sum.add(itemAmount);
+      const orderItem = order.orderItems.find(
+        (oi) => oi.productId === item.productId,
+      );
+      if (!orderItem) return sum;
+
+      const itemSubtotal = new Decimal(item.unitPrice).mul(item.quantity);
+      const itemVatAmount = itemSubtotal.mul(orderItem.vatRate);
+      const itemTotalAmount = itemSubtotal.add(itemVatAmount);
+
+      return sum.add(itemTotalAmount);
     }, new Decimal(0));
-    const refundVatAmount = refundAmount.mul(this.VAT_RATE);
-    const totalRefundAmount = refundAmount.add(refundVatAmount);
 
     // 3. 결제 부분 취소
     await this.paymentServiceFactory
       .getProvider(order.payment.pgProvider as PgProviderType)
-      .cancelPaymentPartial(order.payment.id, order.userId, totalRefundAmount);
+      .cancelPaymentPartial(order.payment.id, order.userId, refundAmount);
 
     // 4. 상품 환불 처리
     await this.productService.refundProducts(
@@ -385,5 +345,115 @@ export class OrderService {
         },
       },
     });
+  }
+
+  async updateOrder(orderId: string, request: UpdateOrderRequest) {
+    // 1. 기존 주문 조회 및 검증
+    const existingOrder = await this.prismaService.order.findUnique({
+      where: { id: orderId },
+      include: { orderItems: true },
+    });
+
+    if (!existingOrder) {
+      throw new NotFoundException('주문을 찾을 수 없습니다');
+    }
+
+    if (existingOrder.userId !== request.userId) {
+      throw new BadRequestException('주문자가 일치하지 않습니다');
+    }
+
+    if (existingOrder.status !== OrderStatus.PENDING) {
+      throw new BadRequestException('결제 대기 중인 주문만 수정할 수 있습니다');
+    }
+
+    // 2. 상품 정보 조회
+    const productIds = request.orderItems.map((item) => item.productId);
+    const uniqueProductIds = [...new Set(productIds)];
+    const products = await this.productService.findManyByIds(uniqueProductIds);
+
+    if (products.length !== uniqueProductIds.length) {
+      const foundIds = new Set(products.map((p) => p.id));
+      const missing = uniqueProductIds.filter((id) => !foundIds.has(id));
+      throw new BadRequestException(
+        `다음 상품이 존재하지 않습니다: ${missing.join(', ')}`,
+      );
+    }
+
+    // 3. 새로운 주문 아이템 계산
+    const newOrderItems = request.orderItems.map((item) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) {
+        throw new NotFoundException(
+          `상품 ${item.productId}을 찾을 수 없습니다`,
+        );
+      }
+
+      const unitPriceDecimal = new Decimal(product.price);
+      const quantity = item.quantity;
+      const subtotal = unitPriceDecimal.mul(quantity);
+
+      // 상품별 부가세 계산
+      const vatRate = product.vatRate;
+      const vatAmount = subtotal.mul(vatRate);
+      const totalPrice = subtotal.add(vatAmount);
+
+      return {
+        productId: product.id,
+        name: product.name,
+        unitPrice: product.price,
+        quantity: item.quantity,
+        subtotal,
+        vatRate,
+        vatAmount,
+        totalPrice,
+      };
+    });
+
+    // 4. 총 금액 계산
+    const totalSubtotal = newOrderItems.reduce(
+      (sum, item) => sum.add(item.subtotal),
+      new Decimal(0),
+    );
+
+    const totalVatAmount = newOrderItems.reduce(
+      (sum, item) => sum.add(item.vatAmount),
+      new Decimal(0),
+    );
+
+    const totalAmount = totalSubtotal.add(totalVatAmount);
+
+    // 5. 트랜잭션으로 주문 및 아이템 업데이트
+    const updatedOrder = await this.prismaService.$transaction(async (tx) => {
+      // 기존 주문 아이템 삭제
+      await tx.orderItem.deleteMany({
+        where: { orderId },
+      });
+
+      // 주문 및 새 아이템 생성
+      return await tx.order.update({
+        where: { id: orderId },
+        data: {
+          totalAmount,
+          vatAmount: totalVatAmount,
+          orderItems: {
+            createMany: {
+              data: newOrderItems.map((item) => ({
+                productName: item.name,
+                productId: item.productId,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                vatRate: item.vatRate,
+                vatAmount: item.vatAmount,
+              })),
+            },
+          },
+        },
+        include: {
+          orderItems: true,
+        },
+      });
+    });
+
+    return plainToInstance(DetailOrderResponse, updatedOrder);
   }
 }
